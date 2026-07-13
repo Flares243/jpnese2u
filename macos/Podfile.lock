@@ -1,0 +1,28 @@
+PODS:
+  - flutter_macos_permissions (0.0.1):
+    - FlutterMacOS
+  - FlutterMacOS (1.0.0)
+  - screen_capturer_macos (0.0.1):
+    - FlutterMacOS
+
+DEPENDENCIES:
+  - flutter_macos_permissions (from `Flutter/ephemeral/.symlinks/plugins/flutter_macos_permissions/macos`)
+  - FlutterMacOS (from `Flutter/ephemeral`)
+  - screen_capturer_macos (from `Flutter/ephemeral/.symlinks/plugins/screen_capturer_macos/macos`)
+
+EXTERNAL SOURCES:
+  flutter_macos_permissions:
+    :path: Flutter/ephemeral/.symlinks/plugins/flutter_macos_permissions/macos
+  FlutterMacOS:
+    :path: Flutter/ephemeral
+  screen_capturer_macos:
+    :path: Flutter/ephemeral/.symlinks/plugins/screen_capturer_macos/macos
+
+SPEC CHECKSUMS:
+  flutter_macos_permissions: 8dd293e7d4bc0c493347cd290d3161e1ebb4268b
+  FlutterMacOS: d0db08ddef1a9af05a5ec4b724367152bb0500b1
+  screen_capturer_macos: 229306903c56767a7c7d3a48167ba303e95c6d29
+
+PODFILE CHECKSUM: 54d867c82ac51cbd61b565781b9fada492027009
+
+COCOAPODS: 1.16.2

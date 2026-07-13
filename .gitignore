@@ -73,3 +73,9 @@ doc/api/
 
 .flutter-plugins
 .flutter-plugins-dependencies
+
+# FVM Version Cache
+.fvm/
+
+*.g.dart
+*.mapper.dart
