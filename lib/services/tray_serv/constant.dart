@@ -1,7 +1,6 @@
 enum MenuItemEnum {
   capture(label: 'Capture'),
-  edit(label: 'Edit'),
-  save(label: 'Save'),
+  debug(label: 'Debug'),
   exit(label: 'Exit'),
   ;
 

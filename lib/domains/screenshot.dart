@@ -1,21 +1,29 @@
-import 'package:dart_mappable/dart_mappable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kuromoji/kuromoji.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:screen_capturer/screen_capturer.dart';
 
-part 'screenshot.mapper.dart';
+import 'package:jpnese2u/services/tokenize_serv/model.dart';
+import 'package:jpnese2u/util/extensions/json_ext.dart';
 
-@MappableClass()
-class ScreenshotState with ScreenshotStateMappable {
+part 'screenshot.g.dart';
+
+@JsonSerializable(explicitToJson: true)
+class ScreenshotState {
+  @JsonKey(toJson: capturedDataToJson, fromJson: capturedDataFromJson)
+  final CapturedData captureData;
+  final String? text;
+  final List<RawToken> tokens;
+
   const ScreenshotState({
-    required this.data,
+    required this.captureData,
     this.text,
     this.tokens = const [],
   });
 
-  final CapturedData data;
-  final String? text;
-  final List<UnknownToken> tokens;
+  factory ScreenshotState.fromJson(Map<String, dynamic> json) =>
+      _$ScreenshotStateFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ScreenshotStateToJson(this);
 }
 
 class ScreenshotCubit extends Cubit<ScreenshotState?> {

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:kuromoji/kuromoji.dart';
+import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:screen_capturer/screen_capturer.dart';
 import 'package:tray_manager/tray_manager.dart';
@@ -10,27 +10,33 @@ import 'package:jpnese2u/gen/assets.gen.dart';
 import 'package:jpnese2u/services/ocr_serv/interface.dart';
 import 'package:jpnese2u/services/permission_serv/interface.dart';
 import 'package:jpnese2u/services/tokenize_serv/interface.dart';
+import 'package:jpnese2u/services/tokenize_serv/model.dart';
 import 'package:jpnese2u/services/tray_serv/constant.dart';
+import 'package:jpnese2u/util/app_directories.dart';
+import 'package:jpnese2u/util/constant/constant.dart';
+import 'package:jpnese2u/util/extensions/list.dart';
 import 'package:jpnese2u/util/merged_stream.dart';
 
 class TrayServ with TrayListener {
   TrayServ({
-    required this.permissionServ,
     required this.screenshotCubit,
+    required this.permissionServ,
     required this.ocrServ,
     required this.tokenizeServ,
+    required this.appDirectories,
   }) {
-    _menuChangeStream = MergedStream([
+    _stateChangeStream = MergedStream([
       screenshotCubit.stream,
     ]);
   }
 
-  final IPermissionServ permissionServ;
   final ScreenshotCubit screenshotCubit;
+  final IPermissionServ permissionServ;
   final IOCRService ocrServ;
   final ITokenizeService tokenizeServ;
+  final AppDirectories appDirectories;
 
-  late final MergedStream _menuChangeStream;
+  late final MergedStream _stateChangeStream;
 
   @override
   void onTrayIconMouseDown() {
@@ -47,10 +53,14 @@ class TrayServ with TrayListener {
         _onCapture();
         break;
 
-      case MenuItemEnum.edit:
-        break;
+      case MenuItemEnum.debug:
+        final controllers = await WindowController.getAll();
 
-      case MenuItemEnum.save:
+        for (var controller in controllers) {
+          print(
+            'Window ID: ${controller.windowId}, Arguments: ${controller.arguments}',
+          );
+        }
         break;
 
       case MenuItemEnum.exit:
@@ -65,13 +75,13 @@ class TrayServ with TrayListener {
     await trayManager.setIcon(Assets.images.trayIcon.path);
 
     _setContextMenu(null);
-    _menuChangeStream.stream.listen(_setContextMenu);
+    _stateChangeStream.stream.listen(_setContextMenu);
   }
 
   void _setContextMenu(_) async {
     final screenRecordPermission = await permissionServ.checkScreenRecord();
 
-    print('Screen record permission: ${screenshotCubit.state}');
+    print('Screen record permission: $screenRecordPermission');
 
     await trayManager.setContextMenu(
       Menu(
@@ -84,17 +94,11 @@ class TrayServ with TrayListener {
                 : null,
             disabled: screenRecordPermission != PermissionStatus.granted,
           ),
-          MenuItem(
-            key: MenuItemEnum.edit.name,
-            label: MenuItemEnum.edit.label,
-            disabled: screenshotCubit.state == null,
-          ),
-          MenuItem(
-            key: MenuItemEnum.save.name,
-            label: MenuItemEnum.save.label,
-            disabled: screenshotCubit.state == null,
-          ),
           MenuItem.separator(),
+          MenuItem(
+            key: MenuItemEnum.debug.name,
+            label: MenuItemEnum.debug.label,
+          ),
           MenuItem(
             key: MenuItemEnum.exit.name,
             label: MenuItemEnum.exit.label,
@@ -105,12 +109,17 @@ class TrayServ with TrayListener {
   }
 
   Future<void> _onCapture() async {
-    final captureData = await screenCapturer.capture();
+    final tempDirPath = appDirectories.temporaryDirectory.path;
+
+    final captureData = await screenCapturer.capture(
+      copyToClipboard: false,
+      imagePath: [tempDirPath, kTempScreenshotFileName].toPath,
+    );
 
     if (captureData == null) return;
 
     String? text;
-    List<UnknownToken> tokens = [];
+    List<RawToken> tokens = [];
 
     final imageBytes = captureData.imageBytes;
 
@@ -120,15 +129,16 @@ class TrayServ with TrayListener {
 
     if (text != null) {
       tokens = await tokenizeServ.tokenize(text);
+      if (tokens.isNotEmpty) tokens.removeLast();
     }
 
-    screenshotCubit.setState(
-      ScreenshotState(
-        data: captureData,
-        text: text,
-        tokens: tokens,
-      ),
+    final captureState = ScreenshotState(
+      captureData: captureData,
+      text: text,
+      tokens: tokens,
     );
+
+    screenshotCubit.setState(captureState);
   }
 
   void _onExit() {
@@ -136,7 +146,7 @@ class TrayServ with TrayListener {
   }
 
   void dispose() {
-    _menuChangeStream.dispose();
+    _stateChangeStream.dispose();
     trayManager.removeListener(this);
   }
 }

@@ -1,4 +1,6 @@
 PODS:
+  - desktop_multi_window (0.0.1):
+    - FlutterMacOS
   - flutter_macos_permissions (0.0.1):
     - FlutterMacOS
   - FlutterMacOS (1.0.0)
@@ -6,11 +8,14 @@ PODS:
     - FlutterMacOS
 
 DEPENDENCIES:
+  - desktop_multi_window (from `Flutter/ephemeral/.symlinks/plugins/desktop_multi_window/macos`)
   - flutter_macos_permissions (from `Flutter/ephemeral/.symlinks/plugins/flutter_macos_permissions/macos`)
   - FlutterMacOS (from `Flutter/ephemeral`)
   - screen_capturer_macos (from `Flutter/ephemeral/.symlinks/plugins/screen_capturer_macos/macos`)
 
 EXTERNAL SOURCES:
+  desktop_multi_window:
+    :path: Flutter/ephemeral/.symlinks/plugins/desktop_multi_window/macos
   flutter_macos_permissions:
     :path: Flutter/ephemeral/.symlinks/plugins/flutter_macos_permissions/macos
   FlutterMacOS:
@@ -19,6 +24,7 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/screen_capturer_macos/macos
 
 SPEC CHECKSUMS:
+  desktop_multi_window: 93667594ccc4b88d91a97972fd3b1b89667fa80a
   flutter_macos_permissions: 8dd293e7d4bc0c493347cd290d3161e1ebb4268b
   FlutterMacOS: d0db08ddef1a9af05a5ec4b724367152bb0500b1
   screen_capturer_macos: 229306903c56767a7c7d3a48167ba303e95c6d29

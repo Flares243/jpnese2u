@@ -10,14 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
   cupertino_icons: ^1.0.8
   google_mlkit_text_recognition: ^0.15.1
-  platform_ocr:
-    git:
-      url: https://github.com/chuongch-pivot/platform_ocr.git
-      ref: main
-  window_manager: ^0.5.2
   tray_manager: ^0.5.3
   flutter_macos_permissions: ^2.0.8
   permission_handler: ^12.0.3
@@ -26,16 +20,30 @@ dependencies:
   retrofit: ^4.9.2
   logger: ^2.7.0
   json_annotation: ^4.12.0
-  kuromoji:
-    git:
-      url: https://github.com/chuongch-pivot/kuromoji.git
-      ref: mistress
   envied: ^1.3.8
   dart_mappable: ^4.8.0
   flutter_bloc: ^9.1.1
   flutter_secure_storage: ^10.3.1
   shared_preferences: ^2.5.5
   desktop_multi_window: ^0.3.0
+  path_provider: ^2.1.6
+  pasteboard: ^0.5.0
+  window_manager:
+    git:
+      url: https://github.com/chuongch-pivot/window_manager.git
+      ref: fix
+      path: packages/window_manager
+  mecab_for_dart:
+    git:
+      url: https://github.com/chuongch-pivot/mecab_for_dart.git
+      ref: master
+  platform_ocr:
+    git:
+      url: https://github.com/Flares243/platform_ocr.git
+      ref: main
+  archive: ^4.0.9
+  stretch_wrap: ^0.1.1
+  copy_with_extension: ^15.0.1
 
 dev_dependencies:
   flutter_test:
@@ -45,12 +53,19 @@ dev_dependencies:
   build_runner: ^2.15.0
   flutter_gen_runner: ^5.14.1
   retrofit_generator: ^10.2.7
-  json_serializable: ^6.14.0
   envied_generator: ^1.3.8
   dart_mappable_builder: ^4.9.0
+  json_serializable: ^6.14.0
+  copy_with_extension_gen: ^15.0.1
 
 flutter:
   uses-material-design: true
 
   assets:
     - assets/images/tray_icon.png
+    - assets/dictionary/
+
+  fonts:
+    - family: JetBrainsMono
+      fonts:
+        - asset: assets/fonts/jetBrains_mono.ttf

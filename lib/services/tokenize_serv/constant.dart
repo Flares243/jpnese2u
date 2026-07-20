@@ -1,0 +1,4 @@
+enum DictionaryType {
+  unidic,
+  ipadic,
+}

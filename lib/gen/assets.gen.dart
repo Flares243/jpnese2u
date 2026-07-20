@@ -11,6 +11,19 @@
 
 import 'package:flutter/widgets.dart';
 
+class $AssetsDictionaryGen {
+  const $AssetsDictionaryGen();
+
+  /// File path: assets/dictionary/ipadic.zip
+  String get ipadic => 'assets/dictionary/ipadic.zip';
+
+  /// File path: assets/dictionary/unidic.zip
+  String get unidic => 'assets/dictionary/unidic.zip';
+
+  /// List of all assets
+  List<String> get values => [ipadic, unidic];
+}
+
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
@@ -22,9 +35,8 @@ class $AssetsImagesGen {
   List<AssetGenImage> get values => [trayIcon];
 }
 
-class Assets {
-  const Assets._();
-
+abstract final class Assets {
+  static const $AssetsDictionaryGen dictionary = $AssetsDictionaryGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
 }
 
