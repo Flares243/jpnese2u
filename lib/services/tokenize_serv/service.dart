@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 
 import 'package:archive/archive.dart';
-import 'package:jpnese2u/util/functions.dart';
 import 'package:mecab_for_dart/mecab_dart.dart';
 
 import 'package:jpnese2u/gen/assets.gen.dart';
@@ -12,6 +11,7 @@ import 'package:jpnese2u/services/tokenize_serv/interface.dart';
 import 'package:jpnese2u/services/tokenize_serv/model.dart';
 import 'package:jpnese2u/util/app_directories.dart';
 import 'package:jpnese2u/util/extensions/list.dart';
+import 'package:jpnese2u/util/functions.dart';
 
 class TokenizeService implements ITokenizeService {
   TokenizeService({
@@ -88,11 +88,8 @@ class TokenizeService implements ITokenizeService {
 
       if (file.isFile) {
         final data = file.content;
+        final outFile = File([appSupportDir.path, filename].toPath);
 
-        final baseName = filename.split(Platform.pathSeparator).last;
-        if (baseName.isEmpty) continue;
-
-        final outFile = File([appSupportDir.path, baseName].toPath);
         await outFile.parent.create(recursive: true);
         await outFile.writeAsBytes(data);
       }
