@@ -46,6 +46,11 @@ const _posStyles = <Hinshi, PosStyle>{
     borderColor: AppColor.xffcbd5e1,
     headerColor: AppColor.xff475569,
   ),
+  Hinshi.symbol: PosStyle(
+    bg: AppColor.xfff9fafb,
+    borderColor: AppColor.xffd1d5db,
+    headerColor: AppColor.xff374151,
+  ),
   Hinshi.auxSymbol: PosStyle(
     bg: AppColor.xfff9fafb,
     borderColor: AppColor.xffd1d5db,
@@ -72,6 +77,11 @@ const _posStyles = <Hinshi, PosStyle>{
     headerColor: AppColor.xff0c4a6e,
   ),
   Hinshi.whitespace: PosStyle(
+    bg: AppColor.xfffafafa,
+    borderColor: AppColor.xffe4e4e7,
+    headerColor: AppColor.xff71717a,
+  ),
+  Hinshi.unknown: PosStyle(
     bg: AppColor.xfffafafa,
     borderColor: AppColor.xffe4e4e7,
     headerColor: AppColor.xff71717a,

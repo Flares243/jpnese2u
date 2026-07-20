@@ -4,7 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:jpnese2u/domains/screenshot.dart';
 import 'package:jpnese2u/services/ocr_serv/interface.dart';
-import 'package:jpnese2u/services/ocr_serv/service.dart';
+import 'package:jpnese2u/services/ocr_serv/macos.dart';
+import 'package:jpnese2u/services/ocr_serv/winos.dart';
 import 'package:jpnese2u/services/permission_serv/interface.dart';
 import 'package:jpnese2u/services/permission_serv/macos_service.dart';
 import 'package:jpnese2u/services/permission_serv/winos_service.dart';
@@ -31,20 +32,10 @@ class RootDependencies extends StatelessWidget {
             create: (_) => AppDirectories(),
           ),
           RepositoryProvider<IPermissionServ>(
-            create: (_) {
-              if (kIsMacOS) {
-                return MacOSPermissionServ();
-              }
-
-              if (kIsWindows) {
-                return WinOSPermissionServ();
-              }
-
-              throw UnimplementedError();
-            },
+            create: _getPermissionServ,
           ),
           RepositoryProvider<IOCRService>(
-            create: (_) => OCRService(),
+            create: _getOCRServ,
           ),
           RepositoryProvider<WindowEntitiesCtrller>(
             create: (context) => WindowEntitiesCtrller(
@@ -69,5 +60,29 @@ class RootDependencies extends StatelessWidget {
         child: child,
       ),
     );
+  }
+
+  IOCRService _getOCRServ(_) {
+    if (kIsMacOS) {
+      return MacOSOCRService();
+    }
+
+    if (kIsWindows) {
+      return WinOSOCRService();
+    }
+
+    throw UnimplementedError();
+  }
+
+  IPermissionServ _getPermissionServ(_) {
+    if (kIsMacOS) {
+      return MacOSPermissionServ();
+    }
+
+    if (kIsWindows) {
+      return WinOSPermissionServ();
+    }
+
+    throw UnimplementedError();
   }
 }

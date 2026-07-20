@@ -1,30 +1,12 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:jpnese2u/ui/common/copy_region/model.dart';
 
 import 'package:pasteboard/pasteboard.dart';
 
-sealed class CopyContent {
-  const CopyContent();
-}
-
-class CopyText extends CopyContent {
-  const CopyText(this.text);
-
-  final String text;
-}
-
-class CopyFile extends CopyContent {
-  const CopyFile({required this.path, this.bytes});
-
-  final String path;
-  final Uint8List? bytes;
-}
-
-class HoverableCopyRegion extends StatefulWidget {
-  const HoverableCopyRegion({
+class CopyRegion extends StatefulWidget {
+  const CopyRegion({
     super.key,
     required this.child,
     this.content,
@@ -34,10 +16,10 @@ class HoverableCopyRegion extends StatefulWidget {
   final CopyContent? content;
 
   @override
-  State<HoverableCopyRegion> createState() => _HoverableCopyRegionState();
+  State<CopyRegion> createState() => _CopyRegionState();
 }
 
-class _HoverableCopyRegionState extends State<HoverableCopyRegion> {
+class _CopyRegionState extends State<CopyRegion> {
   bool _hovering = false;
 
   @override
@@ -54,7 +36,7 @@ class _HoverableCopyRegionState extends State<HoverableCopyRegion> {
             Positioned(
               top: 8,
               right: 8,
-              child: _CopyButton(content: widget.content!),
+              child: CopyButton(content: widget.content!),
             ),
         ],
       ),
@@ -62,16 +44,16 @@ class _HoverableCopyRegionState extends State<HoverableCopyRegion> {
   }
 }
 
-class _CopyButton extends StatefulWidget {
-  const _CopyButton({required this.content});
+class CopyButton extends StatefulWidget {
+  const CopyButton({super.key, required this.content});
 
   final CopyContent content;
 
   @override
-  State<_CopyButton> createState() => _CopyButtonState();
+  State<CopyButton> createState() => _CopyButtonState();
 }
 
-class _CopyButtonState extends State<_CopyButton> {
+class _CopyButtonState extends State<CopyButton> {
   bool _copied = false;
 
   Future<void> _copy() async {

@@ -1,10 +1,11 @@
 import 'dart:typed_data';
 
+import 'package:jpnese2u/util/functions.dart';
 import 'package:platform_ocr/platform_ocr.dart';
 
 import 'package:jpnese2u/services/ocr_serv/interface.dart';
 
-class OCRService implements IOCRService {
+class WinOSOCRService implements IOCRService {
   final ocr = PlatformOcr();
 
   @override
@@ -16,6 +17,12 @@ class OCRService implements IOCRService {
       ),
     );
 
-    return textFromBytes.text;
+    var text = textFromBytes.lines
+        .map((e) => e.text)
+        .join('\n')
+        .replaceAll(' ', '');
+    text = normalizeJapanesePunctuation(text);
+
+    return text;
   }
 }

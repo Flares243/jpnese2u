@@ -64,6 +64,11 @@ enum Hinshi {
     abbreviation: 'SUFF',
     isContentWord: false,
   ),
+  symbol(
+    jp: '記号',
+    abbreviation: 'PUNCT',
+    isContentWord: false,
+  ),
   auxSymbol(
     jp: '補助記号',
     abbreviation: 'PUNCT',
@@ -73,7 +78,13 @@ enum Hinshi {
     jp: '空白',
     abbreviation: 'SPACE',
     isContentWord: false,
-  );
+  ),
+  unknown(
+    jp: '',
+    abbreviation: 'UNKNOWN',
+    isContentWord: false,
+  ),
+  ;
 
   const Hinshi({
     required this.jp,

@@ -43,8 +43,11 @@ class ScreenshotSelectionCubit extends Cubit<ScreenshotSelectionState> {
 
   void selectToken(int groupId, int tokenId) {
     final current = Set<int>.of(state.selectionIds[groupId] ?? {});
+
     if (current.contains(tokenId)) return;
+
     current.add(tokenId);
+
     emit(
       state.copyWith(
         selectionIds: {...state.selectionIds, groupId: current},

@@ -11,4 +11,7 @@
 abstract final class FontFamily {
   /// Font family: JetBrainsMono
   static const String jetBrainsMono = 'JetBrainsMono';
+
+  /// Font family: SF Pro Text
+  static const String sFProText = 'SF Pro Text';
 }

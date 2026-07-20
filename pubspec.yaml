@@ -30,12 +30,13 @@ dependencies:
   pasteboard: ^0.5.0
   window_manager:
     git:
-      url: https://github.com/chuongch-pivot/window_manager.git
+      url: https://github.com/Flares243/window_manager
       ref: fix
       path: packages/window_manager
   mecab_for_dart:
+    # path: D:/code/flutter_plugins/mecab_for_dart
     git:
-      url: https://github.com/chuongch-pivot/mecab_for_dart.git
+      url: https://github.com/Flares243/mecab_for_dart.git
       ref: master
   platform_ocr:
     git:
@@ -69,3 +70,24 @@ flutter:
     - family: JetBrainsMono
       fonts:
         - asset: assets/fonts/jetBrains_mono.ttf
+
+    - family: SF Pro Text
+      fonts:
+        - asset: assets/fonts/SF_Pro_Text_Ultralight.otf
+          weight: 100
+        - asset: assets/fonts/SF_Pro_Text_Thin.otf
+          weight: 200
+        - asset: assets/fonts/SF_Pro_Text_Light.otf
+          weight: 300
+        - asset: assets/fonts/SF_Pro_Text_Regular.otf
+          weight: 400
+        - asset: assets/fonts/SF_Pro_Text_Medium.otf
+          weight: 500
+        - asset: assets/fonts/SF_Pro_Text_Semibold.otf
+          weight: 600
+        - asset: assets/fonts/SF_Pro_Text_Bold.otf
+          weight: 700
+        - asset: assets/fonts/SF_Pro_Text_Heavy.otf
+          weight: 800
+        - asset: assets/fonts/SF_Pro_Text_Black.otf
+          weight: 900

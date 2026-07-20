@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jpnese2u/ui/common/copy_region/copy_region.dart';
+import 'package:jpnese2u/ui/common/copy_region/model.dart';
+import 'package:jpnese2u/util/extensions/string_ext.dart';
+import 'package:jpnese2u/util/functions.dart';
 import 'package:stretch_wrap/stretch_wrap.dart';
 
 import 'package:jpnese2u/domains/screenshot.dart';
@@ -11,7 +15,6 @@ import 'package:jpnese2u/services/tokenize_serv/model.dart';
 import 'package:jpnese2u/theme/app_color.dart';
 import 'package:jpnese2u/theme/app_text_style.dart';
 import 'package:jpnese2u/ui/common/drag_to_select.dart';
-import 'package:jpnese2u/ui/common/hoverable_copy.dart';
 import 'package:jpnese2u/ui/windows/screenshot/model.dart';
 import 'package:jpnese2u/ui/windows/screenshot/selection_cubit.dart';
 import 'package:jpnese2u/util/constant/hinshi.dart';
@@ -135,7 +138,7 @@ class _ScreenshotImage extends StatelessWidget {
         final tempDir = context.appDirectories.temporaryDirectory.path;
         final windowId = snapshot.data!.windowId;
 
-        return HoverableCopyRegion(
+        return CopyRegion(
           content: CopyFile(
             path: '$tempDir/$windowId.png',
             bytes: imageBytes,
@@ -197,6 +200,14 @@ class _SentenceGroup extends StatelessWidget {
                         ),
                     child: Text(allSelected ? 'Deselect all' : 'Select all'),
                   ),
+                  Spacer(),
+                  CopyButton(
+                    content: CopyText(
+                      encodePrettyJson(
+                        sentence.toJson(),
+                      ),
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 12),
@@ -211,29 +222,29 @@ class _SentenceGroup extends StatelessWidget {
                   spacing: 8,
                   runSpacing: 8,
                   crossRunAlignment: .stretch,
-                  children: [
-                    for (final token in sentence.tokens)
-                      if (token.pos == Hinshi.auxSymbol.jp)
-                        _PunctCard(token: token)
-                      else
-                        Selectable(
-                          onSelectionChanged: (selected) {
-                            if (selected) {
-                              context
-                                  .read<ScreenshotSelectionCubit>()
-                                  .selectToken(sentence.id, token.id);
-                            }
-                          },
-                          child: _TokenCard(
-                            token: token,
-                            groupId: sentence.id,
-                            isSelected: selection.isSelected(
-                              sentence.id,
-                              token.id,
-                            ),
-                          ),
+                  children: sentence.tokens.map((token) {
+                    if (token.pos.isPunctuation) {
+                      return _PunctCard(token: token);
+                    }
+
+                    return Selectable(
+                      key: ValueKey(token.id),
+                      onSelectionChanged: (selected) {
+                        context.read<ScreenshotSelectionCubit>().toggleToken(
+                          sentence.id,
+                          token.id,
+                        );
+                      },
+                      child: _TokenCard(
+                        token: token,
+                        groupId: sentence.id,
+                        isSelected: selection.isSelected(
+                          sentence.id,
+                          token.id,
                         ),
-                  ],
+                      ),
+                    );
+                  }).toList(),
                 ),
               ),
             ],
@@ -314,20 +325,43 @@ class _PunctCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hinshi = Hinshi.fromJp(token.pos);
+    final style = _posStyles[hinshi] ?? _posStyles[Hinshi.unknown];
+    final abbreviation = hinshi?.abbreviation ?? token.pos;
+
     return Opacity(
       opacity: 0.7,
       child: Container(
         decoration: BoxDecoration(
           color: AppColor.xfff0ecf6,
-          borderRadius: .circular(8),
+          borderRadius: .circular(12),
           border: .all(color: AppColor.x33c8c4d5),
         ),
-        padding: const .symmetric(horizontal: 10, vertical: 10),
-        child: Text(
-          token.surface,
-          style: AppTextStyle.tokenWord.copyWith(
-            color: AppColor.xff1b1b22,
-          ),
+        padding: const .symmetric(vertical: 8, horizontal: 12),
+        child: Column(
+          spacing: 4,
+          mainAxisSize: .min,
+          crossAxisAlignment: .start,
+          children: [
+            Text(
+              token.surface,
+              style: AppTextStyle.tokenWord.copyWith(
+                color: AppColor.xff1b1b22,
+              ),
+            ),
+            Text(
+              token.reading,
+              style: AppTextStyle.tokenReading.copyWith(
+                color: AppColor.xff464553,
+              ),
+            ),
+            Text(
+              abbreviation,
+              style: AppTextStyle.tokenBadge.copyWith(
+                color: style?.headerColor,
+              ),
+            ),
+          ],
         ),
       ),
     );
