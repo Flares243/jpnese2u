@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-class DragSelectNotifier extends ValueNotifier<Offset?> {
-  DragSelectNotifier() : super(null);
-}
+typedef DragSelectNotifier = ValueNotifier<Offset?>;
 
 class _DragSelectScope extends InheritedWidget {
   const _DragSelectScope({
@@ -35,7 +33,8 @@ class DragToSelectRegion extends StatefulWidget {
 }
 
 class _DragToSelectRegionState extends State<DragToSelectRegion> {
-  final _notifier = DragSelectNotifier();
+  final _notifier = ValueNotifier<Offset?>(null);
+
   Offset? _startPosition;
   bool _isDragging = false;
 
@@ -64,6 +63,7 @@ class _DragToSelectRegionState extends State<DragToSelectRegion> {
 
   void _onPointerUp(PointerUpEvent event) {
     _startPosition = null;
+
     if (_isDragging) {
       _notifier.value = null;
       _isDragging = false;
@@ -107,8 +107,10 @@ class Selectable extends StatefulWidget {
 
 class _SelectableState extends State<Selectable> {
   final _key = GlobalKey();
+
   DragSelectNotifier? _notifier;
-  bool _wasSelected = false;
+  bool _isSelected = false;
+  bool _canUpdate = true;
 
   @override
   void didChangeDependencies() {
@@ -129,23 +131,26 @@ class _SelectableState extends State<Selectable> {
   }
 
   void _onDragChanged() {
-    final dragRect = _notifier?.value;
+    final cursorPos = _notifier?.value;
 
-    if (dragRect == null) {
-      _wasSelected = false;
+    if (cursorPos == null) {
+      _canUpdate = true;
       return;
     }
 
     final renderBox = _key.currentContext?.findRenderObject() as RenderBox?;
     if (renderBox == null || !renderBox.attached) return;
-
     final topLeft = renderBox.localToGlobal(Offset.zero);
     final myRect = topLeft & renderBox.size;
-    final isSelected = myRect.contains(dragRect);
 
-    if (isSelected != _wasSelected) {
-      _wasSelected = isSelected;
-      widget.onSelectionChanged(isSelected);
+    final isDraggingMe = myRect.contains(cursorPos);
+
+    if (_canUpdate && isDraggingMe) {
+      _canUpdate = false;
+      _isSelected = !_isSelected;
+      widget.onSelectionChanged(_isSelected);
+    } else if (!_canUpdate && !isDraggingMe) {
+      _canUpdate = true;
     }
   }
 

@@ -4,7 +4,6 @@ import 'package:jpnese2u/services/permission_serv/interface.dart';
 import 'package:jpnese2u/services/tokenize_serv/constant.dart';
 import 'package:jpnese2u/services/tokenize_serv/interface.dart';
 import 'package:jpnese2u/services/tray_serv/service.dart';
-import 'package:jpnese2u/services/window_serv/entities_controller.dart';
 import 'package:jpnese2u/util/app_directories.dart';
 import 'package:jpnese2u/util/extensions/build_context_ext.dart';
 
@@ -20,7 +19,6 @@ class _MyAppState extends State<MyApp> {
 
   IPermissionServ? _permissionServ;
   TrayServ? _trayServ;
-  WindowEntitiesCtrller? _windowEntitiesCtrller;
   ITokenizeService? _tokenizeServ;
   AppDirectories? _appDirectories;
 
@@ -31,7 +29,6 @@ class _MyAppState extends State<MyApp> {
     if (!_isInitialized) {
       _permissionServ = context.iPermissionServ;
       _trayServ = context.trayServ;
-      _windowEntitiesCtrller = context.windowEntitiesCtrller;
       _tokenizeServ = context.iTokenizeServ;
       _appDirectories = context.appDirectories;
 
@@ -44,7 +41,6 @@ class _MyAppState extends State<MyApp> {
     await _permissionServ?.requestScreenRecord();
 
     await _tokenizeServ?.init(DictionaryType.ipadic);
-    _windowEntitiesCtrller?.init();
 
     await _trayServ?.init();
 
@@ -54,7 +50,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void dispose() {
     _trayServ?.dispose();
-    _windowEntitiesCtrller?.dispose();
     super.dispose();
   }
 

@@ -1,51 +1,42 @@
 import 'package:flutter/material.dart';
-
-enum AppFonts {
-  jetbrainsMono('JetBrainsMono'),
-  ;
-
-  const AppFonts(this.name);
-
-  final String name;
-}
+import 'package:jpnese2u/theme/app_font.dart';
 
 class AppTextStyle {
-  static const sectionLabel = TextStyle(
+  static final sectionLabel = TextStyle(
     fontSize: 11,
-    fontWeight: FontWeight.w600,
     letterSpacing: 1.2,
+    fontFamily: AppFonts.sfProText.name,
   );
 
-  static const headline = TextStyle(
+  static final headline = TextStyle(
     fontSize: 24,
-    fontWeight: FontWeight.w700,
-    letterSpacing: -0.48,
     height: 1.33,
+    letterSpacing: -0.48,
+    fontFamily: AppFonts.sfProText.name,
   );
 
-  static const tokenWord = TextStyle(
+  static final tokenWord = TextStyle(
     fontSize: 24,
-    fontWeight: FontWeight.w700,
-    letterSpacing: -0.48,
     height: 1.33,
+    letterSpacing: -0.48,
+    fontFamily: AppFonts.sfProText.name,
   );
 
-  static TextStyle get tokenBadge => TextStyle(
+  static final tokenBadge = TextStyle(
     fontSize: 11,
-    fontWeight: FontWeight.w500,
     letterSpacing: 0.24,
-    fontFamily: AppFonts.jetbrainsMono.name,
+    fontFamily: AppFonts.sfProText.name,
   );
 
-  static const tokenReading = TextStyle(
-    fontSize: 11,
-    fontWeight: FontWeight.w600,
-    height: 1.4,
-  );
-
-  static const tokenMeaning = TextStyle(
+  static final tokenReading = TextStyle(
     fontSize: 14,
-    fontWeight: FontWeight.w400,
+    height: 1.4,
+    fontFamily: AppFonts.sfProText.name,
+  );
+
+  static final tokenMeaning = TextStyle(
+    fontSize: 14,
     height: 1.43,
+    fontFamily: AppFonts.sfProText.name,
   );
 }

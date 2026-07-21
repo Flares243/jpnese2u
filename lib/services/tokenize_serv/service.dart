@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 
 import 'package:archive/archive.dart';
-import 'package:jpnese2u/util/functions.dart';
 import 'package:mecab_for_dart/mecab_dart.dart';
 
 import 'package:jpnese2u/gen/assets.gen.dart';
@@ -41,11 +40,8 @@ class TokenizeService implements ITokenizeService {
     if (tokenizer == null) {
       throw Exception('Tokenizer is not initialized. Call init() first.');
     }
-    final tokens = tokenizer.parse(text);
 
-    for (var element in tokens) {
-      printPrettyJson({"s": element.surface, "f": element.features});
-    }
+    final tokens = tokenizer.parse(text);
 
     return switch (_dictionaryType) {
       DictionaryType.unidic =>
@@ -88,11 +84,8 @@ class TokenizeService implements ITokenizeService {
 
       if (file.isFile) {
         final data = file.content;
+        final outFile = File([appSupportDir.path, filename].toPath);
 
-        final baseName = filename.split(Platform.pathSeparator).last;
-        if (baseName.isEmpty) continue;
-
-        final outFile = File([appSupportDir.path, baseName].toPath);
         await outFile.parent.create(recursive: true);
         await outFile.writeAsBytes(data);
       }

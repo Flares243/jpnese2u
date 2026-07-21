@@ -55,13 +55,18 @@ enum Hinshi {
     isContentWord: false,
   ),
   prefix(
-    jp: '接頭辞',
+    jp: '接頭詞',
     abbreviation: 'PREF',
     isContentWord: false,
   ),
   suffix(
     jp: '接尾辞',
     abbreviation: 'SUFF',
+    isContentWord: false,
+  ),
+  symbol(
+    jp: '記号',
+    abbreviation: 'PUNCT',
     isContentWord: false,
   ),
   auxSymbol(
@@ -73,7 +78,13 @@ enum Hinshi {
     jp: '空白',
     abbreviation: 'SPACE',
     isContentWord: false,
-  );
+  ),
+  unknown(
+    jp: '',
+    abbreviation: 'UNKNOWN',
+    isContentWord: false,
+  ),
+  ;
 
   const Hinshi({
     required this.jp,

@@ -1,11 +1,12 @@
 import 'dart:io';
 
 import 'package:desktop_multi_window/desktop_multi_window.dart';
+import 'package:jpnese2u/services/window_factory/service.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:screen_capturer/screen_capturer.dart';
 import 'package:tray_manager/tray_manager.dart';
 
-import 'package:jpnese2u/domains/screenshot.dart';
+import 'package:jpnese2u/models/capture_info.dart';
 import 'package:jpnese2u/gen/assets.gen.dart';
 import 'package:jpnese2u/services/ocr_serv/interface.dart';
 import 'package:jpnese2u/services/permission_serv/interface.dart';
@@ -15,28 +16,34 @@ import 'package:jpnese2u/services/tray_serv/constant.dart';
 import 'package:jpnese2u/util/app_directories.dart';
 import 'package:jpnese2u/util/constant/constant.dart';
 import 'package:jpnese2u/util/extensions/list.dart';
-import 'package:jpnese2u/util/merged_stream.dart';
 
 class TrayServ with TrayListener {
-  TrayServ({
-    required this.screenshotCubit,
+  const TrayServ({
     required this.permissionServ,
     required this.ocrServ,
     required this.tokenizeServ,
+    required this.windowFactoryServ,
     required this.appDirectories,
-  }) {
-    _stateChangeStream = MergedStream([
-      screenshotCubit.stream,
-    ]);
-  }
+  });
 
-  final ScreenshotCubit screenshotCubit;
   final IPermissionServ permissionServ;
   final IOCRService ocrServ;
   final ITokenizeService tokenizeServ;
+  final WindowFactoryServ windowFactoryServ;
   final AppDirectories appDirectories;
 
-  late final MergedStream _stateChangeStream;
+  Future<void> init() async {
+    trayManager.addListener(this);
+
+    await trayManager.setIcon(Assets.images.trayIcon.path);
+    await trayManager.setToolTip('Japanese2U');
+
+    _setContextMenu(null);
+  }
+
+  void dispose() {
+    trayManager.removeListener(this);
+  }
 
   @override
   void onTrayIconMouseDown() {
@@ -67,15 +74,6 @@ class TrayServ with TrayListener {
         _onExit();
         break;
     }
-  }
-
-  Future<void> init() async {
-    trayManager.addListener(this);
-
-    await trayManager.setIcon(Assets.images.trayIcon.path);
-
-    _setContextMenu(null);
-    _stateChangeStream.stream.listen(_setContextMenu);
   }
 
   void _setContextMenu(_) async {
@@ -132,21 +130,16 @@ class TrayServ with TrayListener {
       if (tokens.isNotEmpty) tokens.removeLast();
     }
 
-    final captureState = ScreenshotState(
-      captureData: captureData,
+    final captureState = CaptureInfo(
+      data: captureData,
       text: text,
       tokens: tokens,
     );
 
-    screenshotCubit.setState(captureState);
+    windowFactoryServ.initCaptureInfoWindow(captureState);
   }
 
   void _onExit() {
     exit(0);
-  }
-
-  void dispose() {
-    _stateChangeStream.dispose();
-    trayManager.removeListener(this);
   }
 }

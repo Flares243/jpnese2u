@@ -3,19 +3,15 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 
 import 'package:desktop_multi_window/desktop_multi_window.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jpnese2u/services/window_factory/service.dart';
 import 'package:window_manager/window_manager.dart';
 
-import 'package:jpnese2u/domains/screenshot.dart';
-import 'package:jpnese2u/services/window_serv/constant.dart';
+import 'package:jpnese2u/services/window_factory/constant.dart';
 import 'package:jpnese2u/ui/my_app.dart';
 import 'package:jpnese2u/ui/root_deps.dart';
-import 'package:jpnese2u/ui/windows/screenshot/screenshot_window.dart';
-import 'package:jpnese2u/util/app_directories.dart';
 
 Future<void> main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await windowManager.ensureInitialized();
 
   final windowController = await WindowController.fromCurrentEngine();
@@ -28,43 +24,21 @@ Future<void> main(List<String> args) async {
 
     switch (windowType) {
       case WindowType.screenshot:
-        _showScreenshotWindow(windowController);
+        WindowFactoryServ.showCaptureInfoWindow(windowController);
         return;
     }
   }
 
-  await windowManager.hide();
+  const options = WindowOptions(
+    size: Size(900, 700),
+    center: true,
+    titleBarStyle: .normal,
+  );
+
+  windowManager.waitUntilReadyToShow(options, () async {
+    await windowManager.hide();
+    await windowManager.setSkipTaskbar(true);
+  });
 
   runApp(RootDependencies(child: const MyApp()));
-}
-
-void _showScreenshotWindow(WindowController windowController) async {
-  final screenshotArgs = ScreenshotWindowArguments.fromJson(
-    jsonDecode(windowController.arguments) as Map<String, dynamic>,
-  );
-
-  windowManager.waitUntilReadyToShow(
-    WindowOptions(size: Size(800, 600)),
-    () async {
-      await windowManager.show();
-      await windowManager.focus();
-    },
-  );
-
-  final appDirectories = AppDirectories();
-  await appDirectories.init();
-
-  runApp(
-    MultiRepositoryProvider(
-      providers: [
-        RepositoryProvider<AppDirectories>(
-          create: (_) => appDirectories,
-        ),
-        RepositoryProvider<ScreenshotState>(
-          create: (_) => screenshotArgs.screenshotData,
-        ),
-      ],
-      child: ScreenshotWindow(),
-    ),
-  );
 }
