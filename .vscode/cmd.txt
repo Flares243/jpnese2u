@@ -1,3 +1,5 @@
 flutter run -d macos
+
 flutter run -d windows
+
 dart run build_runner build

@@ -107,9 +107,10 @@ class Selectable extends StatefulWidget {
 
 class _SelectableState extends State<Selectable> {
   final _key = GlobalKey();
+
   DragSelectNotifier? _notifier;
   bool _isSelected = false;
-  bool _isDraggingMe = false;
+  bool _canUpdate = true;
 
   @override
   void didChangeDependencies() {
@@ -133,22 +134,23 @@ class _SelectableState extends State<Selectable> {
     final cursorPos = _notifier?.value;
 
     if (cursorPos == null) {
-      _isDraggingMe = false;
+      _canUpdate = true;
       return;
     }
-
-    if (_isDraggingMe) return;
 
     final renderBox = _key.currentContext?.findRenderObject() as RenderBox?;
     if (renderBox == null || !renderBox.attached) return;
     final topLeft = renderBox.localToGlobal(Offset.zero);
     final myRect = topLeft & renderBox.size;
 
-    _isDraggingMe = myRect.contains(cursorPos);
+    final isDraggingMe = myRect.contains(cursorPos);
 
-    if (_isDraggingMe) {
+    if (_canUpdate && isDraggingMe) {
+      _canUpdate = false;
       _isSelected = !_isSelected;
       widget.onSelectionChanged(_isSelected);
+    } else if (!_canUpdate && !isDraggingMe) {
+      _canUpdate = true;
     }
   }
 

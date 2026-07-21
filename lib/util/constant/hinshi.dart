@@ -55,7 +55,7 @@ enum Hinshi {
     isContentWord: false,
   ),
   prefix(
-    jp: '接頭辞',
+    jp: '接頭詞',
     abbreviation: 'PREF',
     isContentWord: false,
   ),
