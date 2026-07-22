@@ -1,36 +1,25 @@
 import 'dart:io';
 
 import 'package:desktop_multi_window/desktop_multi_window.dart';
-import 'package:jpnese2u/services/window_factory/service.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:screen_capturer/screen_capturer.dart';
 import 'package:tray_manager/tray_manager.dart';
 
-import 'package:jpnese2u/models/capture_info.dart';
 import 'package:jpnese2u/gen/assets.gen.dart';
-import 'package:jpnese2u/services/ocr_serv/interface.dart';
+import 'package:jpnese2u/services/capture_serv/interface.dart';
 import 'package:jpnese2u/services/permission_serv/interface.dart';
-import 'package:jpnese2u/services/tokenize_serv/interface.dart';
-import 'package:jpnese2u/services/tokenize_serv/model.dart';
 import 'package:jpnese2u/services/tray_serv/constant.dart';
-import 'package:jpnese2u/util/app_directories.dart';
-import 'package:jpnese2u/util/constant/constant.dart';
-import 'package:jpnese2u/util/extensions/list.dart';
+import 'package:jpnese2u/services/window_factory/service.dart';
 
 class TrayServ with TrayListener {
   const TrayServ({
     required this.permissionServ,
-    required this.ocrServ,
-    required this.tokenizeServ,
+    required this.captureServ,
     required this.windowFactoryServ,
-    required this.appDirectories,
   });
 
   final IPermissionServ permissionServ;
-  final IOCRService ocrServ;
-  final ITokenizeService tokenizeServ;
+  final ICaptureService captureServ;
   final WindowFactoryServ windowFactoryServ;
-  final AppDirectories appDirectories;
 
   Future<void> init() async {
     trayManager.addListener(this);
@@ -92,11 +81,11 @@ class TrayServ with TrayListener {
                 : null,
             disabled: screenRecordPermission != PermissionStatus.granted,
           ),
-          MenuItem.separator(),
           MenuItem(
             key: MenuItemEnum.debug.name,
             label: MenuItemEnum.debug.label,
           ),
+          MenuItem.separator(),
           MenuItem(
             key: MenuItemEnum.exit.name,
             label: MenuItemEnum.exit.label,
@@ -107,36 +96,10 @@ class TrayServ with TrayListener {
   }
 
   Future<void> _onCapture() async {
-    final tempDirPath = appDirectories.temporaryDirectory.path;
+    final captureInfo = await captureServ.capture();
+    if (captureInfo == null) return;
 
-    final captureData = await screenCapturer.capture(
-      copyToClipboard: false,
-      imagePath: [tempDirPath, kTempScreenshotFileName].toPath,
-    );
-
-    if (captureData == null) return;
-
-    String? text;
-    List<RawToken> tokens = [];
-
-    final imageBytes = captureData.imageBytes;
-
-    if (imageBytes != null) {
-      text = await ocrServ.textFromBytes(imageBytes);
-    }
-
-    if (text != null) {
-      tokens = await tokenizeServ.tokenize(text);
-      if (tokens.isNotEmpty) tokens.removeLast();
-    }
-
-    final captureState = CaptureInfo(
-      data: captureData,
-      text: text,
-      tokens: tokens,
-    );
-
-    windowFactoryServ.initCaptureInfoWindow(captureState);
+    windowFactoryServ.initCaptureInfoWindow(captureInfo);
   }
 
   void _onExit() {

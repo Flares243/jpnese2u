@@ -1,19 +1,23 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:jpnese2u/ui/common/copy_region/model.dart';
 
 import 'package:pasteboard/pasteboard.dart';
+
+import 'package:jpnese2u/ui/common/conditional_wrapper.dart';
+import 'package:jpnese2u/ui/common/copy_region/model.dart';
 
 class CopyRegion extends StatefulWidget {
   const CopyRegion({
     super.key,
     required this.child,
     this.content,
+    this.copyButtonTooltip,
   });
 
   final Widget child;
   final CopyContent? content;
+  final String? copyButtonTooltip;
 
   @override
   State<CopyRegion> createState() => _CopyRegionState();
@@ -36,7 +40,14 @@ class _CopyRegionState extends State<CopyRegion> {
             Positioned(
               top: 8,
               right: 8,
-              child: CopyButton(content: widget.content!),
+              child: ConditionalWrapper(
+                condition: widget.copyButtonTooltip != null,
+                wrapper: (child) => Tooltip(
+                  message: widget.copyButtonTooltip,
+                  child: child,
+                ),
+                child: CopyButton(content: widget.content!),
+              ),
             ),
         ],
       ),
@@ -57,6 +68,8 @@ class _CopyButtonState extends State<CopyButton> {
   bool _copied = false;
 
   Future<void> _copy() async {
+    if (_copied) return;
+
     switch (widget.content) {
       case CopyText(:final text):
         Pasteboard.writeText(text);

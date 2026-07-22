@@ -2,6 +2,8 @@ import 'package:flutter/widgets.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:jpnese2u/services/capture_serv/interface.dart';
+import 'package:jpnese2u/services/capture_serv/service.dart';
 import 'package:jpnese2u/services/ocr_serv/interface.dart';
 import 'package:jpnese2u/services/ocr_serv/macos.dart';
 import 'package:jpnese2u/services/ocr_serv/winos.dart';
@@ -42,13 +44,18 @@ class RootDependencies extends StatelessWidget {
             appDirectories: context.appDirectories,
           ),
         ),
+        RepositoryProvider<ICaptureService>(
+          create: (context) => CaptureServ(
+            appDirectories: context.appDirectories,
+            ocrServ: context.iOCRServ,
+            tokenizeServ: context.iTokenizeServ,
+          ),
+        ),
         RepositoryProvider<TrayServ>(
           create: (context) => TrayServ(
-            appDirectories: context.appDirectories,
             permissionServ: context.iPermissionServ,
-            ocrServ: context.iOCRServ,
+            captureServ: context.iCaptureServ,
             windowFactoryServ: context.windowFactoryServ,
-            tokenizeServ: context.iTokenizeServ,
           ),
         ),
       ],

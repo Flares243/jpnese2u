@@ -1,16 +1,18 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
+
 import 'package:desktop_multi_window/desktop_multi_window.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:window_manager/window_manager.dart';
 
 import 'package:jpnese2u/models/capture_info.dart';
 import 'package:jpnese2u/services/window_factory/constant.dart';
-import 'package:jpnese2u/ui/windows/capture_info/capture_info_window.dart';
+import 'package:jpnese2u/theme/app_theme.dart';
+import 'package:jpnese2u/ui/capture_info/view.dart';
 import 'package:jpnese2u/util/app_directories.dart';
-import 'package:window_manager/window_manager.dart';
+import 'package:jpnese2u/util/constant/constant.dart';
 
 class WindowFactoryServ {
   WindowFactoryServ();
@@ -32,7 +34,7 @@ class WindowFactoryServ {
     );
 
     windowManager.waitUntilReadyToShow(
-      WindowOptions(size: Size(800, 600)),
+      WindowOptions(size: kDefaultWindowSize),
       () async {
         await windowManager.show();
         await windowManager.focus();
@@ -52,7 +54,11 @@ class WindowFactoryServ {
             create: (_) => screenshotArgs.captureInfo,
           ),
         ],
-        child: CaptureInfoWindow(),
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.light,
+          home: CaptureInfoScreen(),
+        ),
       ),
     );
   }
