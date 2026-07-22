@@ -11,7 +11,6 @@ import 'package:jpnese2u/services/tokenize_serv/interface.dart';
 import 'package:jpnese2u/services/tokenize_serv/model.dart';
 import 'package:jpnese2u/util/app_directories.dart';
 import 'package:jpnese2u/util/extensions/list.dart';
-import 'package:jpnese2u/util/functions.dart';
 
 class TokenizeService implements ITokenizeService {
   TokenizeService({
