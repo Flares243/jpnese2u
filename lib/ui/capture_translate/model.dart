@@ -83,3 +83,15 @@ class CaptureTokenData {
 
   Map<String, dynamic> toJson() => _$CaptureTokenDataToJson(this);
 }
+
+class TokenTranslation {
+  final int id;
+  final String translation;
+
+  const TokenTranslation({
+    required this.id,
+    required this.translation,
+  });
+}
+
+typedef TokenTranslationCache = Map<int, TokenTranslation>;

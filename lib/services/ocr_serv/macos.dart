@@ -16,6 +16,8 @@ class MacOSOCRService implements IOCRService {
       ),
     );
 
-    return textFromBytes.text;
+    var text = textFromBytes.lines.map((e) => e.text).join('\n');
+
+    return text;
   }
 }

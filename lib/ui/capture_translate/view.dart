@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jpnese2u/ui/capture_translate/model.dart';
 import 'package:jpnese2u/ui/common/loading_widget.dart';
 import 'package:screen_capturer/screen_capturer.dart';
 
@@ -20,13 +21,12 @@ import 'package:jpnese2u/ui/common/copy_region/model.dart';
 import 'package:jpnese2u/util/app_directories.dart';
 import 'package:jpnese2u/util/extensions/build_context_ext.dart';
 
-class _DepsProvider extends StatelessWidget {
-  const _DepsProvider({
-    required this.child,
+class CaptureTranslateScreen extends StatelessWidget {
+  const CaptureTranslateScreen({
+    super.key,
     required this.capturedData,
   });
 
-  final Widget child;
   final CapturedData capturedData;
 
   @override
@@ -35,6 +35,9 @@ class _DepsProvider extends StatelessWidget {
       providers: [
         RepositoryProvider<CapturedData>(
           create: (_) => capturedData,
+        ),
+        RepositoryProvider<TokenTranslationCache>(
+          create: (_) => <int, TokenTranslation>{},
         ),
         RepositoryProvider<AppDirectories>(
           create: (_) => AppDirectories(),
@@ -72,7 +75,7 @@ class _DepsProvider extends StatelessWidget {
                   return LoadingWidget();
                 }
 
-                return child;
+                return _CaptureTranslateScreen();
               },
             );
           },
@@ -82,69 +85,61 @@ class _DepsProvider extends StatelessWidget {
   }
 }
 
-class CaptureTranslateScreen extends StatelessWidget {
-  const CaptureTranslateScreen({
-    super.key,
-    required this.capturedData,
-  });
-
-  final CapturedData capturedData;
+class _CaptureTranslateScreen extends StatelessWidget {
+  const _CaptureTranslateScreen();
 
   @override
   Widget build(BuildContext context) {
-    final imageBytes = capturedData.imageBytes;
+    final imageBytes = context.read<CapturedData>().imageBytes;
 
-    return _DepsProvider(
-      capturedData: capturedData,
-      child: Scaffold(
-        body: SingleChildScrollView(
-          padding: const .all(20),
-          child: Center(
-            child: Column(
-              spacing: 16,
-              crossAxisAlignment: .start,
-              children: [
-                if (imageBytes != null) _CaptureImage(imageBytes: imageBytes),
-                BlocBuilder<CaptureTranslateVM, CaptureTranslateState>(
-                  builder: (context, state) {
-                    final infoSnapshot = state.info;
+    return Scaffold(
+      body: SingleChildScrollView(
+        padding: const .all(20),
+        child: Center(
+          child: Column(
+            spacing: 16,
+            crossAxisAlignment: .start,
+            children: [
+              if (imageBytes != null) _CaptureImage(imageBytes: imageBytes),
+              BlocBuilder<CaptureTranslateVM, CaptureTranslateState>(
+                builder: (context, state) {
+                  final infoSnapshot = state.info;
 
-                    if (infoSnapshot.connectionState != .done) {
-                      return LoadingWidget();
-                    }
+                  if (infoSnapshot.connectionState != .done) {
+                    return LoadingWidget();
+                  }
 
-                    final info = infoSnapshot.data;
+                  final info = infoSnapshot.data;
 
-                    if (info == null) {
-                      return Center(
-                        child: Text(
-                          "Error occurred while processing the captured image.",
-                          style: AppTextStyle.headline,
-                        ),
-                      );
-                    }
-
-                    final sentences = info.sentences;
-
-                    return Column(
-                      spacing: 12,
-                      crossAxisAlignment: .start,
-                      children: [
-                        SelectableText(
-                          info.text ?? '',
-                          style: AppTextStyle.headline.copyWith(
-                            color: AppColor.xFF1B1B22,
-                            fontFamily: AppFonts.bizUDPGothic.name,
-                          ),
-                        ),
-                        for (var i = 0; i < sentences.length; i++)
-                          SentenceInfoPanel(sentence: sentences[i]),
-                      ],
+                  if (info == null) {
+                    return Center(
+                      child: Text(
+                        "Error occurred while processing the captured image.",
+                        style: AppTextStyle.headline,
+                      ),
                     );
-                  },
-                ),
-              ],
-            ),
+                  }
+
+                  final sentences = info.sentences;
+
+                  return Column(
+                    spacing: 12,
+                    crossAxisAlignment: .start,
+                    children: [
+                      SelectableText(
+                        info.text ?? '',
+                        style: AppTextStyle.headline.copyWith(
+                          color: AppColor.xFF1B1B22,
+                          fontFamily: AppFonts.bizUDPGothic.name,
+                        ),
+                      ),
+                      for (var i = 0; i < sentences.length; i++)
+                        SentencePanel(sentence: sentences[i]),
+                    ],
+                  );
+                },
+              ),
+            ],
           ),
         ),
       ),

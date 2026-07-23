@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jpnese2u/util/extensions/string_ext.dart';
 import 'package:screen_capturer/screen_capturer.dart';
 
 import 'package:jpnese2u/services/ocr_serv/interface.dart';
@@ -24,7 +25,9 @@ class CaptureTranslateState {
 class CaptureTranslateVM extends Cubit<CaptureTranslateState> {
   CaptureTranslateVM(this._ocrServ, this._tokenizeServ)
     : super(
-        CaptureTranslateState(info: AsyncSnapshot.waiting()),
+        CaptureTranslateState(
+          info: AsyncSnapshot.waiting(),
+        ),
       );
 
   final IOCRService _ocrServ;
@@ -41,7 +44,7 @@ class CaptureTranslateVM extends Cubit<CaptureTranslateState> {
     }
 
     if (text != null) {
-      tokens = await _tokenizeServ.tokenize(text);
+      tokens = await _tokenizeServ.tokenize(text.removeNewLines());
       if (tokens.isNotEmpty) tokens.removeLast();
     }
 

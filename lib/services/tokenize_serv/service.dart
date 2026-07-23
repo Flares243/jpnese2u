@@ -74,13 +74,6 @@ class TokenizeService implements ITokenizeService {
     for (final file in archive) {
       final filename = file.name;
 
-      if (filename.contains('__MACOSX') ||
-          filename
-              .split('/')
-              .any((part) => part.startsWith('._') || part == '.DS_Store')) {
-        continue;
-      }
-
       if (file.isFile) {
         final data = file.content;
         final outFile = File([appSupportDir.path, filename].toPath);
