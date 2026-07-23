@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 
 import 'package:archive/archive.dart';
+
 import 'package:mecab_for_dart/mecab_dart.dart';
 
 import 'package:jpnese2u/gen/assets.gen.dart';
@@ -13,14 +14,12 @@ import 'package:jpnese2u/util/app_directories.dart';
 import 'package:jpnese2u/util/extensions/list_ext.dart';
 
 class TokenizeService implements ITokenizeService {
-  TokenizeService({
-    required this.appDirectories,
-  });
+  TokenizeService({required this.appDirectories});
 
   final AppDirectories appDirectories;
 
   Mecab? _tokenizer;
-  DictionaryType _dictionaryType = DictionaryType.ipadic;
+  DictionaryType _dictionaryType = .ipadic;
 
   @override
   Future<void> init(DictionaryType dictType) async {

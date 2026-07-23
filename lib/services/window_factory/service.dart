@@ -5,22 +5,41 @@ import 'package:flutter/material.dart';
 
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:screen_capturer/screen_capturer.dart';
 import 'package:window_manager/window_manager.dart';
 
-import 'package:jpnese2u/models/capture_info.dart';
 import 'package:jpnese2u/services/window_factory/constant.dart';
+import 'package:jpnese2u/services/window_factory/model.dart';
 import 'package:jpnese2u/theme/app_theme.dart';
-import 'package:jpnese2u/ui/capture_info/view.dart';
-import 'package:jpnese2u/util/app_directories.dart';
+import 'package:jpnese2u/ui/capture_translate/view.dart';
 import 'package:jpnese2u/util/constant/constant.dart';
 
 class WindowFactoryServ {
-  WindowFactoryServ();
+  const WindowFactoryServ();
 
-  Future<void> initCaptureInfoWindow(CaptureInfo state) async {
-    final args = ScreenshotWindowArguments(
+  Future<bool> routing() async {
+    final windowController = await WindowController.fromCurrentEngine();
+
+    if (windowController.arguments.isNotEmpty) {
+      final windowArgs = WindowArguments.fromJson(
+        jsonDecode(windowController.arguments) as Map<String, dynamic>,
+      );
+      final windowType = windowArgs.type;
+
+      switch (windowType) {
+        case WindowType.screenshot:
+          _showCaptureTranslateWindow(windowController);
+          return true;
+      }
+    }
+
+    return false;
+  }
+
+  Future<void> showCaptureTranslateWindow(CapturedData data) async {
+    final args = CaptureTranslateWindowArguments(
       type: WindowType.screenshot,
-      captureInfo: state,
+      capturedData: data,
     );
 
     await WindowController.create(
@@ -28,36 +47,30 @@ class WindowFactoryServ {
     );
   }
 
-  static void showCaptureInfoWindow(WindowController windowController) async {
-    final screenshotArgs = ScreenshotWindowArguments.fromJson(
+  void _showCaptureTranslateWindow(
+    WindowController windowController,
+  ) async {
+    final screenshotArgs = CaptureTranslateWindowArguments.fromJson(
       jsonDecode(windowController.arguments) as Map<String, dynamic>,
     );
 
     windowManager.waitUntilReadyToShow(
-      WindowOptions(size: kDefaultWindowSize),
+      WindowOptions(size: kDefaultWindowSize, center: true),
       () async {
         await windowManager.show();
         await windowManager.focus();
       },
     );
 
-    final appDirectories = AppDirectories();
-    await appDirectories.init();
-
     runApp(
-      MultiRepositoryProvider(
-        providers: [
-          RepositoryProvider<AppDirectories>(
-            create: (_) => appDirectories,
-          ),
-          RepositoryProvider<CaptureInfo>(
-            create: (_) => screenshotArgs.captureInfo,
-          ),
-        ],
+      RepositoryProvider(
+        create: (_) => windowController,
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: AppTheme.light,
-          home: CaptureInfoScreen(),
+          home: CaptureTranslateScreen(
+            capturedData: screenshotArgs.capturedData,
+          ),
         ),
       ),
     );

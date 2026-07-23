@@ -4,6 +4,8 @@ formatter:
   trailing_commas: preserve
 
 analyzer:
+  errors:
+    prefer_initializing_formals: ignore
   exclude:
     - "**/*.g.dart"
     - "**/*.freezed.dart"

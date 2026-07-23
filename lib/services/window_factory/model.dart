@@ -3,27 +3,38 @@ import 'dart:typed_data';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:screen_capturer/screen_capturer.dart';
 
-import 'package:jpnese2u/services/tokenize_serv/model.dart';
+import 'package:jpnese2u/services/window_factory/constant.dart';
 
-part 'capture_info.g.dart';
+part 'model.g.dart';
+
+@JsonSerializable()
+class WindowArguments {
+  final WindowType type;
+
+  const WindowArguments({required this.type});
+
+  factory WindowArguments.fromJson(Map<String, dynamic> json) =>
+      _$WindowArgumentsFromJson(json);
+
+  Map<String, dynamic> toJson() => _$WindowArgumentsToJson(this);
+}
 
 @JsonSerializable(explicitToJson: true)
-class CaptureInfo {
+class CaptureTranslateWindowArguments extends WindowArguments {
   @JsonKey(toJson: capturedDataToJson, fromJson: capturedDataFromJson)
-  final CapturedData data;
-  final String? text;
-  final List<RawToken> tokens;
+  final CapturedData capturedData;
 
-  const CaptureInfo({
-    required this.data,
-    this.text,
-    this.tokens = const [],
+  const CaptureTranslateWindowArguments({
+    required super.type,
+    required this.capturedData,
   });
 
-  factory CaptureInfo.fromJson(Map<String, dynamic> json) =>
-      _$CaptureInfoFromJson(json);
+  factory CaptureTranslateWindowArguments.fromJson(Map<String, dynamic> json) =>
+      _$CaptureTranslateWindowArgumentsFromJson(json);
 
-  Map<String, dynamic> toJson() => _$CaptureInfoToJson(this);
+  @override
+  Map<String, dynamic> toJson() =>
+      _$CaptureTranslateWindowArgumentsToJson(this);
 }
 
 Map<String, Object?> capturedDataToJson(CapturedData value) => {

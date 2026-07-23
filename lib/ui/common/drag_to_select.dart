@@ -95,10 +95,12 @@ class Selectable extends StatefulWidget {
   const Selectable({
     super.key,
     required this.child,
+    this.isSelected = false,
     required this.onSelectionChanged,
   });
 
   final Widget child;
+  final bool isSelected;
   final ValueChanged<bool> onSelectionChanged;
 
   @override
@@ -111,6 +113,14 @@ class _SelectableState extends State<Selectable> {
   DragSelectNotifier? _notifier;
   bool _isSelected = false;
   bool _canUpdate = true;
+
+  @override
+  void didUpdateWidget(covariant Selectable oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isSelected != oldWidget.isSelected) {
+      _isSelected = widget.isSelected;
+    }
+  }
 
   @override
   void didChangeDependencies() {

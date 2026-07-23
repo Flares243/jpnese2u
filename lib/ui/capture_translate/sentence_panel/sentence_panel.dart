@@ -6,8 +6,8 @@ import 'package:stretch_wrap/stretch_wrap.dart';
 import 'package:jpnese2u/theme/app_color.dart';
 import 'package:jpnese2u/theme/app_font.dart';
 import 'package:jpnese2u/theme/app_text_style.dart';
-import 'package:jpnese2u/ui/capture_info/model.dart';
-import 'package:jpnese2u/ui/capture_info/sentence_selection_cubit.dart';
+import 'package:jpnese2u/ui/capture_translate/model.dart';
+import 'package:jpnese2u/ui/capture_translate/sentence_panel/sentence_selection_cubit.dart';
 import 'package:jpnese2u/ui/common/copy_region/copy_region.dart';
 import 'package:jpnese2u/ui/common/copy_region/model.dart';
 import 'package:jpnese2u/ui/common/drag_to_select.dart';
@@ -15,25 +15,41 @@ import 'package:jpnese2u/util/constant/hinshi.dart';
 import 'package:jpnese2u/util/extensions/string_ext.dart';
 import 'package:jpnese2u/util/functions.dart';
 
-class SentencePanel extends StatelessWidget {
-  const SentencePanel({
-    super.key,
+class _DepsProvider extends StatelessWidget {
+  const _DepsProvider({
     required this.sentence,
-    required this.selectionCubit,
+    required this.child,
   });
 
-  final SentenceInfo sentence;
-  final SentenceSelectionCubit selectionCubit;
+  final CaptureSentenceData sentence;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => selectionCubit,
+    return RepositoryProvider(
+      create: (_) => sentence,
+      child: BlocProvider(
+        create: (_) => SentenceSelectionCubit(sentence),
+        child: child,
+      ),
+    );
+  }
+}
+
+class SentenceInfoPanel extends StatelessWidget {
+  const SentenceInfoPanel({super.key, required this.sentence});
+
+  final CaptureSentenceData sentence;
+
+  @override
+  Widget build(BuildContext context) {
+    return _DepsProvider(
+      sentence: sentence,
       child: Container(
         decoration: BoxDecoration(
           color: AppColor.white,
           borderRadius: .circular(12),
-          border: .all(color: AppColor.x1ac8c4d5),
+          border: .all(color: AppColor.x1AC8C4D5),
           boxShadow: kElevationToShadow[1],
         ),
         padding: const EdgeInsets.all(20),
@@ -46,7 +62,7 @@ class SentencePanel extends StatelessWidget {
                   child: SelectableText(
                     sentence.text,
                     style: AppTextStyle.headline.copyWith(
-                      color: AppColor.xff1b1b22,
+                      color: AppColor.xFF1B1B22,
                       fontFamily: AppFonts.bizUDPGothic.name,
                     ),
                   ),
@@ -60,52 +76,14 @@ class SentencePanel extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             const Divider(
-              color: AppColor.xffe4e1eb,
+              color: AppColor.xFFE4E1EB,
               height: 1,
               thickness: 1,
             ),
             const SizedBox(height: 16),
-            _SentenceFilterSegment(sentence: sentence),
+            _SentenceFilterSegment(),
             const SizedBox(height: 20),
-            BlocBuilder<SentenceSelectionCubit, SentenceSelectionState>(
-              builder: (context, selection) => DragToSelectRegion(
-                child: StretchWrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  crossRunAlignment: .stretch,
-                  children: sentence.tokens.map((token) {
-                    if (token.pos.isPunctuation) {
-                      return _PunctCard(token: token);
-                    }
-
-                    return Selectable(
-                      key: ValueKey(token.id),
-                      onSelectionChanged: (selected) {
-                        if (selected) {
-                          context.sentenceSelectionCubit.selectToken(
-                            sentence.id,
-                            token.id,
-                          );
-                        } else {
-                          context.sentenceSelectionCubit.deselectToken(
-                            sentence.id,
-                            token.id,
-                          );
-                        }
-                      },
-                      child: _TokenCard(
-                        token: token,
-                        groupId: sentence.id,
-                        isSelected: selection.isTokenSelected(
-                          sentence.id,
-                          token.id,
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
-            ),
+            _CardsBlock(),
           ],
         ),
       ),
@@ -114,38 +92,37 @@ class SentencePanel extends StatelessWidget {
 }
 
 class _SentenceFilterSegment extends StatelessWidget {
-  const _SentenceFilterSegment({required this.sentence});
-
-  final SentenceInfo sentence;
+  const _SentenceFilterSegment();
 
   @override
   Widget build(BuildContext context) {
-    final tokensByHinshi = sentence.tokensByHinshi;
+    final cubit = context.sentenceSelectionCubit;
+    final sentence = context.read<CaptureSentenceData>();
+    final tokensByHinshi = sentence.selectableTokens.hinshiMapping;
 
-    return BlocBuilder<SentenceSelectionCubit, SentenceSelectionState>(
+    return BlocSelector<
+      SentenceSelectionCubit,
+      SentenceSelectionState,
+      Set<int>
+    >(
+      selector: (state) => state.selection,
       builder: (context, selection) {
-        final allSelected = selection.isSentenceSelected(
-          sentence.id,
-          sentence.selectableTokens.length,
-        );
-
-        final noneSelected = selection.sentences[sentence.id]?.isEmpty ?? false;
+        final allSelected = cubit.isAllSelected();
+        final noneSelected = cubit.isNoneSelected();
 
         return Wrap(
           spacing: 8,
           runSpacing: 8,
           children: [
-            if (tokensByHinshi.isNotEmpty) ...[
+            if (tokensByHinshi.isNotEmpty)
               ...tokensByHinshi.entries.map((entry) {
                 final hinshi = entry.key;
                 final tokens = entry.value;
 
                 final style = hinshi.posStyle;
-                final isSelected =
-                    selection.sentences[sentence.id]?.containsAll(
-                      tokens.map((t) => t.id),
-                    ) ??
-                    false;
+                final isSelected = selection.isTokensSelected(
+                  tokens.map((e) => e.id),
+                );
 
                 return _FilterSegmentChip(
                   text: hinshi.abbreviation,
@@ -153,32 +130,22 @@ class _SentenceFilterSegment extends StatelessWidget {
                   style: style,
                   onSelected: (value) {
                     if (value) {
-                      context.sentenceSelectionCubit.selectByHinshi(
-                        sentence.id,
-                        sentence.selectableTokens,
-                        hinshi,
-                      );
+                      cubit.selectByHinshi(hinshi);
                     } else {
-                      context.sentenceSelectionCubit.deselectByHinshi(
-                        sentence.id,
-                        sentence.selectableTokens,
-                        hinshi,
-                      );
+                      cubit.deselectByHinshi(hinshi);
                     }
                   },
                 );
               }),
-            ],
             _FilterSegmentChip(
               text: 'ALL',
               isSelected: allSelected,
               style: Hinshi.unknown.posStyle,
               onSelected: (value) {
                 if (value) {
-                  context.sentenceSelectionCubit.selectAll(
-                    sentence.id,
-                    sentence.selectableTokens,
-                  );
+                  cubit.selectAll();
+                } else {
+                  cubit.deselectAll();
                 }
               },
             ),
@@ -188,7 +155,9 @@ class _SentenceFilterSegment extends StatelessWidget {
               style: Hinshi.unknown.posStyle,
               onSelected: (value) {
                 if (value) {
-                  context.sentenceSelectionCubit.deselectAll(sentence.id);
+                  cubit.deselectAll();
+                } else {
+                  cubit.selectAll();
                 }
               },
             ),
@@ -241,16 +210,74 @@ class _FilterSegmentChip extends StatelessWidget {
   }
 }
 
+class _CardsBlock extends StatelessWidget {
+  const _CardsBlock();
+
+  @override
+  Widget build(BuildContext context) {
+    final cubit = context.sentenceSelectionCubit;
+    final sentence = context.read<CaptureSentenceData>();
+
+    return BlocSelector<
+      SentenceSelectionCubit,
+      SentenceSelectionState,
+      Set<int>
+    >(
+      selector: (state) => state.selection,
+      builder: (context, selection) => DragToSelectRegion(
+        child: StretchWrap(
+          spacing: 8,
+          runSpacing: 8,
+          crossRunAlignment: .stretch,
+          children: sentence.tokens.map((token) {
+            if (token.pos.isPunctuation) {
+              return _PunctCard(token: token);
+            }
+
+            final isSelected = selection.contains(token.id);
+
+            return Selectable(
+              key: ValueKey(token.id),
+              isSelected: isSelected,
+              onSelectionChanged: (selected) {
+                if (selected) {
+                  cubit.selectToken(token.id);
+                } else {
+                  cubit.deselectToken(token.id);
+                }
+              },
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: GestureDetector(
+                  onTap: () {
+                    if (isSelected) {
+                      cubit.deselectToken(token.id);
+                    } else {
+                      cubit.selectToken(token.id);
+                    }
+                  },
+                  child: _TokenCard(
+                    token: token,
+                    isSelected: isSelected,
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+}
+
 class _TokenCard extends StatelessWidget {
   const _TokenCard({
-    required this.groupId,
-    required this.token,
     required this.isSelected,
+    required this.token,
   });
 
-  final int groupId;
-  final UIToken token;
   final bool isSelected;
+  final CaptureTokenData token;
 
   @override
   Widget build(BuildContext context) {
@@ -258,56 +285,44 @@ class _TokenCard extends StatelessWidget {
     final style = hinshi.posStyle;
     final abbreviation = hinshi.abbreviation;
 
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: () {
-          if (isSelected) {
-            context.sentenceSelectionCubit.deselectToken(groupId, token.id);
-          } else {
-            context.sentenceSelectionCubit.selectToken(groupId, token.id);
-          }
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            color: style.bg,
-            borderRadius: .circular(12),
-            border: .all(
-              color: isSelected ? style.headerColor : style.borderColor,
-              width: isSelected ? 2 : 1,
-              strokeAlign: BorderSide.strokeAlignOutside,
+    return Container(
+      decoration: BoxDecoration(
+        color: style.bg,
+        borderRadius: .circular(12),
+        border: .all(
+          color: isSelected ? style.headerColor : style.borderColor,
+          width: isSelected ? 2 : 1,
+          strokeAlign: BorderSide.strokeAlignOutside,
+        ),
+      ),
+      padding: const .symmetric(vertical: 8, horizontal: 12),
+      child: Column(
+        spacing: 4,
+        mainAxisSize: .min,
+        crossAxisAlignment: .start,
+        children: [
+          Text(
+            token.surface,
+            style: AppTextStyle.tokenWord.copyWith(
+              color: AppColor.xFF1B1B22,
+              fontWeight: .bold,
+              fontFamily: AppFonts.bizUDPGothic.name,
             ),
           ),
-          padding: const .symmetric(vertical: 8, horizontal: 12),
-          child: Column(
-            spacing: 4,
-            mainAxisSize: .min,
-            crossAxisAlignment: .start,
-            children: [
-              Text(
-                token.surface,
-                style: AppTextStyle.tokenWord.copyWith(
-                  color: AppColor.xff1b1b22,
-                  fontWeight: .bold,
-                  fontFamily: AppFonts.bizUDPGothic.name,
-                ),
-              ),
-              Text(
-                token.reading,
-                style: AppTextStyle.tokenReading.copyWith(
-                  color: AppColor.xff464553,
-                  fontFamily: AppFonts.bizUDPGothic.name,
-                ),
-              ),
-              Text(
-                abbreviation,
-                style: AppTextStyle.tokenBadge.copyWith(
-                  color: style.headerColor,
-                ),
-              ),
-            ],
+          Text(
+            token.reading,
+            style: AppTextStyle.tokenReading.copyWith(
+              color: AppColor.xFF464553,
+              fontFamily: AppFonts.bizUDPGothic.name,
+            ),
           ),
-        ),
+          Text(
+            abbreviation,
+            style: AppTextStyle.tokenBadge.copyWith(
+              color: style.headerColor,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -316,7 +331,7 @@ class _TokenCard extends StatelessWidget {
 class _PunctCard extends StatelessWidget {
   const _PunctCard({required this.token});
 
-  final UIToken token;
+  final CaptureTokenData token;
 
   @override
   Widget build(BuildContext context) {
@@ -328,9 +343,9 @@ class _PunctCard extends StatelessWidget {
       opacity: 0.7,
       child: Container(
         decoration: BoxDecoration(
-          color: AppColor.xfff0ecf6,
+          color: AppColor.xFFF0ECF6,
           borderRadius: .circular(12),
-          border: .all(color: AppColor.x33c8c4d5),
+          border: .all(color: AppColor.x33C8C4D5),
         ),
         padding: const .symmetric(vertical: 8, horizontal: 12),
         child: Column(
@@ -341,7 +356,7 @@ class _PunctCard extends StatelessWidget {
             Text(
               token.surface,
               style: AppTextStyle.tokenWord.copyWith(
-                color: AppColor.xff1b1b22,
+                color: AppColor.xFF1B1B22,
                 fontWeight: .bold,
                 fontFamily: AppFonts.bizUDPGothic.name,
               ),
@@ -349,7 +364,7 @@ class _PunctCard extends StatelessWidget {
             Text(
               token.reading,
               style: AppTextStyle.tokenReading.copyWith(
-                color: AppColor.xff464553,
+                color: AppColor.xFF464553,
                 fontFamily: AppFonts.bizUDPGothic.name,
               ),
             ),

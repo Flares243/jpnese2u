@@ -1,3 +1,4 @@
+import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mecab_for_dart/mecab_dart.dart';
 
@@ -24,21 +25,26 @@ sealed class RawToken {
   Map<String, dynamic> toJson();
 }
 
-// UniDic feature indices:
-// [0]  pos            品詞
-// [1]  posSub         品詞細分類1
-// [2]  posSub2        品詞細分類2
-// [3]  posSub3        品詞細分類3
-// [4]  conjugationType 活用型
-// [5]  conjugationForm 活用形
-// [6]  lemmaReading   語彙素読み (kana reading of the lemma)
-// [7]  baseForm       語彙素     (dictionary/lemma form, e.g. "開ける")
-// [8]  orthBase       書字形出現形 (written base of the surface form)
-// [9]  reading        読み形出現形 (kana reading of the surface form)
-// [10] pronunciation  発音形出現形 (pronunciation of the surface form)
-// [11] pronBase       発音形基本形 (base pronunciation)
-// [12] goshu          語種        (word origin: 和/漢/外/混/固/記号)
+// UniDic 17-field specification mapping:
+// [0]  pos1      品詞大分類     (POS level 1)
+// [1]  pos2      品詞中分類     (POS level 2)
+// [2]  pos3      品詞小分類     (POS level 3)
+// [3]  pos4      品詞細分類     (POS level 4)
+// [4]  cType     活用型         (Conjugation type)
+// [5]  cForm     活用形         (Conjugation form)
+// [6]  lForm     語彙素読み     (Lemma reading in Katakana)
+// [7]  lemma     語彙素         (Lemma / dictionary base form)
+// [8]  orth      書字形出現形   (Orthographic surface form)
+// [9]  pron      発音形出現形   (Pronunciation surface form)
+// [10] orthBase  書字形基本形   (Orthographic base form)
+// [11] pronBase  発音形基本形   (Pronunciation base form)
+// [12] goshu     語種           (Word origin: 和/漢/外/混/固/記号)
+// [13] iType     語頭変化型     (Initial transformation type)
+// [14] iForm     語頭変化形     (Initial transformation form)
+// [15] fType     語末変化型     (Final transformation type)
+// [16] fForm     語末変化形     (Final transformation form)
 @JsonSerializable()
+@CopyWith()
 class UnidicToken extends RawToken {
   final String pos;
   final String posSub;
@@ -47,23 +53,32 @@ class UnidicToken extends RawToken {
   final String conjugationType;
   final String conjugationForm;
 
-  /// Kana reading of the lemma (語彙素読み).
+  /// Katakana reading of the lemma (語彙素読み).
   final String lemmaReading;
 
   /// Dictionary/lemma form of the word (語彙素).
   final String baseForm;
 
-  /// Written base of the surface form (書字形出現形).
-  final String orthBase;
-
-  /// Kana reading of the surface form (読み形出現形).
-  final String reading;
+  /// Orthographic surface form (書字形出現形).
+  final String orth;
 
   /// Pronunciation of the surface form (発音形出現形).
   final String pronunciation;
 
+  /// Orthographic base form (書字形基本形).
+  final String orthBase;
+
+  /// Pronunciation base form (発音形基本形).
+  final String pronBase;
+
   /// Word origin/type: 和・漢・外・混・固・記号 (語種).
   final String goshu;
+
+  /// Sound transformation fields (語頭・語末変化).
+  final String iType;
+  final String iForm;
+  final String fType;
+  final String fForm;
 
   const UnidicToken({
     required super.surface,
@@ -75,17 +90,23 @@ class UnidicToken extends RawToken {
     required this.conjugationForm,
     required this.lemmaReading,
     required this.baseForm,
-    required this.orthBase,
-    required this.reading,
+    required this.orth,
     required this.pronunciation,
+    required this.orthBase,
+    required this.pronBase,
     required this.goshu,
+    this.iType = '*',
+    this.iForm = '*',
+    this.fType = '*',
+    this.fForm = '*',
   });
 
   factory UnidicToken.fromMecab(TokenNode rawToken) {
     final features = rawToken.features;
     final surface = rawToken.surface;
 
-    String f(int i) => features.length > i ? features[i] : '';
+    // Safely retrieves feature array elements, defaulting to '*' when missing
+    String f(int i) => features.length > i ? features[i] : '*';
 
     final pos = features.isNotEmpty ? features[0] : 'OTHER';
     final base = f(7);
@@ -100,10 +121,15 @@ class UnidicToken extends RawToken {
       conjugationForm: f(5),
       lemmaReading: f(6),
       baseForm: (base == '*' || base.isEmpty) ? surface : base,
-      orthBase: f(8),
-      reading: f(9),
-      pronunciation: f(10),
+      orth: f(8),
+      pronunciation: f(9),
+      orthBase: f(10),
+      pronBase: f(11),
       goshu: f(12),
+      iType: f(13),
+      iForm: f(14),
+      fType: f(15),
+      fForm: f(16),
     );
   }
 
@@ -117,20 +143,41 @@ class UnidicToken extends RawToken {
   };
 }
 
+// IPADIC standard 9-field feature indices:
+// [0] pos             品詞           (POS main level)
+// [1] posSub          品詞細分類1    (POS subcategory 1)
+// [2] posSub2         品詞細分類2    (POS subcategory 2)
+// [3] posSub3         品詞細分類3    (POS subcategory 3)
+// [4] conjugationType 活用型         (Conjugation type)
+// [5] conjugationForm 活用形         (Conjugation form)
+// [6] baseForm        原形           (Base / dictionary form)
+// [7] reading         読み           (Katakana reading)
+// [8] pronunciation   発音           (Katakana pronunciation)
 @JsonSerializable()
+@CopyWith()
 class IpadicToken extends RawToken {
   final String pos;
   final String posSub;
+  final String posSub2;
+  final String posSub3;
   final String conjugationType;
   final String conjugationForm;
+
+  /// Base form / dictionary form of the word (原形).
   final String baseForm;
+
+  /// Katakana reading of the word (読み).
   final String reading;
+
+  /// Katakana pronunciation of the word (発音).
   final String pronunciation;
 
   const IpadicToken({
     required super.surface,
     required this.pos,
     required this.posSub,
+    required this.posSub2,
+    required this.posSub3,
     required this.conjugationType,
     required this.conjugationForm,
     required this.baseForm,
@@ -142,24 +189,23 @@ class IpadicToken extends RawToken {
     final features = rawToken.features;
     final surface = rawToken.surface;
 
-    // Safety checks: punctuation or empty spaces can yield shorter feature lists
+    // Safely retrieves feature array elements, defaulting to '*' when missing
+    String f(int i) => features.length > i ? features[i] : '*';
+
     final pos = features.isNotEmpty ? features[0] : 'OTHER';
-    final posSub = features.length > 1 ? features[1] : '';
-    final conjugationType = features.length > 4 ? features[4] : '';
-    final conjugationForm = features.length > 5 ? features[5] : '';
-    final base = features.length > 6 ? features[6] : surface;
-    final read = features.length > 7 ? features[7] : '';
-    final pronunciation = features.length > 8 ? features[8] : '';
+    final base = f(6);
 
     return IpadicToken(
       surface: surface,
       pos: pos,
-      posSub: posSub,
-      conjugationType: conjugationType,
-      conjugationForm: conjugationForm,
+      posSub: f(1),
+      posSub2: f(2),
+      posSub3: f(3),
+      conjugationType: f(4),
+      conjugationForm: f(5),
       baseForm: (base == '*' || base.isEmpty) ? surface : base,
-      reading: read,
-      pronunciation: pronunciation,
+      reading: f(7),
+      pronunciation: f(8),
     );
   }
 

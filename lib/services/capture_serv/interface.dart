@@ -1,7 +1,7 @@
-import 'package:jpnese2u/models/capture_info.dart';
+import 'package:screen_capturer/screen_capturer.dart';
 
 abstract class ICaptureService {
-  Future<CaptureInfo?> capture() async {
+  Future<CapturedData?> capture() async {
     throw UnimplementedError('capture() has not been implemented.');
   }
 }

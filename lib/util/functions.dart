@@ -14,3 +14,5 @@ String encodePrettyJson(dynamic json) =>
 
 String normalizeJapanesePunctuation(String text) =>
     text.split('').map((c) => asciiToFullWidthPunctuation[c] ?? c).join();
+
+String getUniqueString() => DateTime.now().millisecondsSinceEpoch.toString();

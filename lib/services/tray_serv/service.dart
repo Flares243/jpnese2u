@@ -96,10 +96,10 @@ class TrayServ with TrayListener {
   }
 
   Future<void> _onCapture() async {
-    final captureInfo = await captureServ.capture();
-    if (captureInfo == null) return;
+    final capturedData = await captureServ.capture();
+    if (capturedData == null) return;
 
-    windowFactoryServ.initCaptureInfoWindow(captureInfo);
+    windowFactoryServ.showCaptureTranslateWindow(capturedData);
   }
 
   void _onExit() {

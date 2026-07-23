@@ -1,5 +1,6 @@
+import 'package:flutter/painting.dart';
+
 import 'package:jpnese2u/theme/app_color.dart';
-import 'package:jpnese2u/ui/capture_info/model.dart';
 
 enum Hinshi {
   noun(
@@ -62,6 +63,11 @@ enum Hinshi {
     abbreviation: 'PREF',
     isContentWord: false,
   ),
+  modernPrefix(
+    jp: '接頭辞',
+    abbreviation: 'PREF',
+    isContentWord: false,
+  ),
   suffix(
     jp: '接尾辞',
     abbreviation: 'SUFF',
@@ -108,92 +114,104 @@ enum Hinshi {
   }
 }
 
+class PosStyle {
+  final Color bg;
+  final Color borderColor;
+  final Color headerColor;
+
+  const PosStyle({
+    required this.bg,
+    required this.borderColor,
+    required this.headerColor,
+  });
+}
+
 extension HinshiExtension on Hinshi {
   PosStyle get posStyle => switch (this) {
     Hinshi.noun => PosStyle(
-      bg: AppColor.xffeef2ff,
-      borderColor: AppColor.xffc7d2fe,
-      headerColor: AppColor.xff312e81,
+      bg: AppColor.xFFEEF2FF,
+      borderColor: AppColor.xFFB0BEFF,
+      headerColor: AppColor.xFF312E81,
     ),
     Hinshi.particle => PosStyle(
-      bg: AppColor.xfff8fafc,
-      borderColor: AppColor.xffe2e8f0,
-      headerColor: AppColor.xff0f172a,
+      bg: AppColor.xFFF8FAFC,
+      borderColor: AppColor.xFFE2E8F0,
+      headerColor: AppColor.xFF0F172A,
     ),
     Hinshi.verb => PosStyle(
-      bg: AppColor.xfffff7ed,
-      borderColor: AppColor.xfff59e0b,
-      headerColor: AppColor.xff92400e,
+      bg: AppColor.xFFFFF7ED,
+      borderColor: AppColor.xE2E5BB72,
+      headerColor: AppColor.xFF92400E,
     ),
     Hinshi.adjI => PosStyle(
-      bg: AppColor.x66fef9c3,
-      borderColor: AppColor.xfffacc15,
-      headerColor: AppColor.xff854d0e,
+      bg: AppColor.x48FEF9C3,
+      borderColor: AppColor.xE0FACC15,
+      headerColor: AppColor.xFF854D0E,
     ),
     Hinshi.adjNa => PosStyle(
-      bg: AppColor.x66ecfccb,
-      borderColor: AppColor.xffa3e635,
-      headerColor: AppColor.xff365314,
+      bg: AppColor.x66ECFCCB,
+      borderColor: AppColor.xFFA3E635,
+      headerColor: AppColor.xFF365314,
     ),
     Hinshi.adverb => PosStyle(
-      bg: AppColor.xfff0fdfa,
-      borderColor: AppColor.xff5eead4,
-      headerColor: AppColor.xff134e4a,
+      bg: AppColor.xFFF0FDFA,
+      borderColor: AppColor.xFF5EEAD4,
+      headerColor: AppColor.xFF134E4A,
     ),
     Hinshi.conjunction => PosStyle(
-      bg: AppColor.xffecfeff,
-      borderColor: AppColor.xff67e8f9,
-      headerColor: AppColor.xff164e63,
+      bg: AppColor.xD4EFF6FF,
+      borderColor: AppColor.x813B83F6,
+      headerColor: AppColor.xFF1E3A8A,
     ),
     Hinshi.interjection => PosStyle(
-      bg: AppColor.xfffff1f2,
-      borderColor: AppColor.xfffda4af,
-      headerColor: AppColor.xff9f1239,
+      bg: AppColor.xFFFFF1F2,
+      borderColor: AppColor.xFFFDA4AF,
+      headerColor: AppColor.xFF9F1239,
     ),
     Hinshi.auxiliary => PosStyle(
-      bg: AppColor.xfff1f5f9,
-      borderColor: AppColor.xffcbd5e1,
-      headerColor: AppColor.xff475569,
+      bg: AppColor.xFFF1F5F9,
+      borderColor: AppColor.xFFCBD5E1,
+      headerColor: AppColor.xFF475569,
     ),
     Hinshi.symbol => PosStyle(
-      bg: AppColor.xfff9fafb,
-      borderColor: AppColor.xffd1d5db,
-      headerColor: AppColor.xff374151,
+      bg: AppColor.xFFF9FAFB,
+      borderColor: AppColor.xFFD1D5DB,
+      headerColor: AppColor.xFF374151,
     ),
     Hinshi.auxSymbol => PosStyle(
-      bg: AppColor.xfff9fafb,
-      borderColor: AppColor.xffd1d5db,
-      headerColor: AppColor.xff374151,
+      bg: AppColor.xFFF9FAFB,
+      borderColor: AppColor.xFFD1D5DB,
+      headerColor: AppColor.xFF374151,
     ),
     Hinshi.pronoun => PosStyle(
-      bg: AppColor.xffede9fe,
-      borderColor: AppColor.xffa78bfa,
-      headerColor: AppColor.xff4c1d95,
+      bg: AppColor.xE8EDE9FE,
+      borderColor: AppColor.xC2A78BFA,
+      headerColor: AppColor.xFF4C1D95,
     ),
     Hinshi.prenominal => PosStyle(
-      bg: AppColor.xfffdf4ff,
-      borderColor: AppColor.xffe879f9,
-      headerColor: AppColor.xff701a75,
+      bg: AppColor.x4DF5C6FF,
+      borderColor: AppColor.xD2E879F9,
+      headerColor: AppColor.xFF701A75,
     ),
-    Hinshi.prefix => PosStyle(
-      bg: AppColor.xffecfdf5,
-      borderColor: AppColor.xff6ee7b7,
-      headerColor: AppColor.xff065f46,
+    Hinshi.prefix || Hinshi.modernPrefix => PosStyle(
+      bg: AppColor.xFFECFDF5,
+      borderColor: AppColor.xFF6EE7B7,
+      headerColor: AppColor.xFF065F46,
     ),
     Hinshi.suffix => PosStyle(
-      bg: AppColor.xfff0f9ff,
-      borderColor: AppColor.xff7dd3fc,
-      headerColor: AppColor.xff0c4a6e,
+      bg: AppColor.xFFFDF4F9,
+      borderColor: AppColor.xB4F472B5,
+      headerColor: AppColor.xFF831843,
     ),
     Hinshi.whitespace => PosStyle(
-      bg: AppColor.xfffafafa,
-      borderColor: AppColor.xffe4e4e7,
-      headerColor: AppColor.xff71717a,
+      bg: AppColor.xFFFAFAFA,
+      borderColor: AppColor.xFFE4E4E7,
+      headerColor: AppColor.xFF71717A,
     ),
     Hinshi.unknown => PosStyle(
-      bg: AppColor.xfffafafa,
-      borderColor: AppColor.xffe4e4e7,
-      headerColor: AppColor.xff71717a,
+      bg: AppColor.xFFFAFAFA,
+      borderColor: AppColor.xFFE4E4E7,
+      headerColor: AppColor.xFF71717A,
     ),
   };
 }
