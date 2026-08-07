@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/cupertino.dart';
 
 class LoadingWidget extends StatelessWidget {
   const LoadingWidget({super.key});
@@ -9,7 +8,7 @@ class LoadingWidget extends StatelessWidget {
     return const Center(
       child: Padding(
         padding: .symmetric(vertical: 20),
-        child: CircularProgressIndicator(),
+        child: CupertinoActivityIndicator(),
       ),
     );
   }

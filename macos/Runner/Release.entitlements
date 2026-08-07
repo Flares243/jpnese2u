@@ -3,10 +3,16 @@
 <plist version="1.0">
   <dict>
     <key>com.apple.security.app-sandbox</key>
-    <true />
+    <false />
     <key>com.apple.security.temporary-exception.mach-register.global-name</key>
     <string>com.apple.screencapture.interactive</string>
     <key>keychain-access-groups</key>
     <array />
+    <key>com.apple.security.network.client</key>
+    <true />
+
+    <!-- Allow access to Temporary/Downloads or user files if reading externally -->
+    <key>com.apple.security.files.user-selected.read-write</key>
+    <true />
   </dict>
 </plist>

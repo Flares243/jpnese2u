@@ -1,4 +1,8 @@
+import 'package:jpnese2u/services/tokenize_serv/mecab/addons.dart';
+import 'package:jpnese2u/services/tokenize_serv/mecab/model.dart';
 import 'package:jpnese2u/services/tokenize_serv/model.dart';
+import 'package:jpnese2u/services/tokenize_serv/sudachi/addons.dart';
+import 'package:jpnese2u/services/tokenize_serv/sudachi/model.dart';
 import 'package:jpnese2u/ui/capture_translate/model.dart';
 import 'package:jpnese2u/util/constant/constant.dart';
 
@@ -16,14 +20,16 @@ extension ListRawTokensExt on List<RawToken> {
       }
 
       if (pendingFlush && kSentenceEnders.contains(token.surface)) {
-        buffer[buffer.length - 1] = switch (buffer.last) {
-          UnidicToken unidicToken => unidicToken.copyWith.surface(
-            unidicToken.surface + token.surface,
-          ),
-          IpadicToken ipadicToken => ipadicToken.copyWith.surface(
-            ipadicToken.surface + token.surface,
-          ),
-        };
+        if (buffer.last is SudachiToken) {
+          buffer[buffer.length - 1] = (buffer.last as SudachiToken).copyWith
+              .surface(buffer.last.surface + token.surface);
+        } else if (buffer.last is UnidicToken) {
+          buffer[buffer.length - 1] = (buffer.last as UnidicToken).copyWith
+              .surface(buffer.last.surface + token.surface);
+        } else if (buffer.last is IpadicToken) {
+          buffer[buffer.length - 1] = (buffer.last as IpadicToken).copyWith
+              .surface(buffer.last.surface + token.surface);
+        }
       } else {
         buffer.add(token);
       }
@@ -42,10 +48,12 @@ extension ListRawTokensExt on List<RawToken> {
         text: raw.map((t) => t.surface).join(),
         tokens: [
           for (final (index, token) in raw.indexed)
-            switch (token) {
-              UnidicToken token => CaptureTokenData.fromUnidic(index, token),
-              IpadicToken token => CaptureTokenData.fromIpadic(index, token),
-            },
+            if (token is SudachiToken)
+              token.toCaptureTokenData(index)
+            else if (token is UnidicToken)
+              token.toCaptureTokenData(index)
+            else if (token is IpadicToken)
+              token.toCaptureTokenData(index),
         ],
       );
 }

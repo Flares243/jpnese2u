@@ -1,0 +1,3 @@
+https://github.com/yomidevs/jmdict-yomitan#jmdict-for-yomitan
+https://pub.dev/packages/kanji_dictionary
+https://pub.dev/packages/jmdict_fast

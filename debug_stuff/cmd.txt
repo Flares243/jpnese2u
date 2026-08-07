@@ -1,0 +1,9 @@
+flutter clean
+flutter run -d macos --dart-define-from-file dart_define/main.json
+flutter run -d windows --dart-define-from-file dart_define/main.json
+
+dart run build_runner build
+
+/Users/chuongcao/Library/Application Support/com.chuongcao.jpnese2u/
+/Users/chuongcao/Library/Containers/com.chuongcao.jpnese2u/Data/Library/Application Support/com.chuongcao.jpnese2u
+/Users/chuongcao/Library/Containers/com.chuongcao.jpnese2u/Data/Documents/

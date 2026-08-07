@@ -1,0 +1,7 @@
+{
+  "sudachiDictSmallUrl": "http://sudachi.s3-website-ap-northeast-1.amazonaws.com/sudachidict/sudachi-dictionary-latest-small.zip",
+  "sudachiDictCoreUrl": "http://sudachi.s3-website-ap-northeast-1.amazonaws.com/sudachidict/sudachi-dictionary-latest-core.zip",
+  "sudachiDictFullUrl": "http://sudachi.s3-website-ap-northeast-1.amazonaws.com/sudachidict/sudachi-dictionary-latest-full.zip",
+  "IPADICUrl": "https://github.com/dariyooo/mecab_for_dart/releases/download/d2.0.0/ipadic.zip",
+  "UniDicUrl": "https://github.com/dariyooo/mecab_for_dart/releases/download/d2.0.0/unidic.zip"
+}

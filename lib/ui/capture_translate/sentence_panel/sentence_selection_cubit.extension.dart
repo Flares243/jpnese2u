@@ -5,7 +5,7 @@ extension BuildContextSentenceSelectionCubit on BuildContext {
       read<SentenceSelectionCubit>();
 }
 
-extension SentenceSelectionStateExtension on Set<int> {
+extension SentenceSelectionStateExtension on SentenceSelectionState {
   bool isTokensSelected(Iterable<int> tokenIds) =>
       tokenIds.every((id) => contains(id));
 }

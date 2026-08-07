@@ -80,3 +80,5 @@ doc/api/
 *.g.dart
 *.mapper.dart
 gen
+
+assets/dictionary/**

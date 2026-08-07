@@ -8,14 +8,14 @@ class MacOSPermissionServ implements IPermissionServ {
   const MacOSPermissionServ();
 
   @override
-  Future<PermissionStatus?> checkScreenRecord() async {
+  Future<PermissionStatus> checkScreenRecord() async {
     final resultString = await FlutterMacosPermissions.screenRecordingStatus();
     final result = MacOSPermissionStatus.fromString(resultString);
     return result.toPermissionStatus;
   }
 
   @override
-  Future<PermissionStatus?> requestScreenRecord() async {
+  Future<PermissionStatus> requestScreenRecord() async {
     final status = await checkScreenRecord();
     if (status == PermissionStatus.granted) return status;
 

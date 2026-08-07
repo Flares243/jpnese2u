@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jpnese2u/util/extensions/string_ext.dart';
 import 'package:screen_capturer/screen_capturer.dart';
 
 import 'package:jpnese2u/services/ocr_serv/interface.dart';
@@ -22,13 +23,17 @@ class CaptureTranslateState {
 }
 
 class CaptureTranslateVM extends Cubit<CaptureTranslateState> {
-  CaptureTranslateVM(this._ocrServ, this._tokenizeServ)
-    : super(
-        CaptureTranslateState(info: AsyncSnapshot.waiting()),
-      );
+  final IOCRService ocrServ;
+  final ITokenizeServ tokenizeServ;
 
-  final IOCRService _ocrServ;
-  final ITokenizeService _tokenizeServ;
+  CaptureTranslateVM({
+    required this.ocrServ,
+    required this.tokenizeServ,
+  }) : super(
+         CaptureTranslateState(
+           info: AsyncSnapshot.waiting(),
+         ),
+       );
 
   Future<void> init(CapturedData capturedData) async {
     String? text;
@@ -37,11 +42,11 @@ class CaptureTranslateVM extends Cubit<CaptureTranslateState> {
     final imageBytes = capturedData.imageBytes;
 
     if (imageBytes != null) {
-      text = await _ocrServ.textFromBytes(imageBytes);
+      text = await ocrServ.textFromBytes(imageBytes);
     }
 
     if (text != null) {
-      tokens = await _tokenizeServ.tokenize(text);
+      tokens = await tokenizeServ.tokenize(text.removeNewLines());
       if (tokens.isNotEmpty) tokens.removeLast();
     }
 
@@ -50,7 +55,7 @@ class CaptureTranslateVM extends Cubit<CaptureTranslateState> {
     emit(
       state.copyWith(
         info: AsyncSnapshot.withData(
-          ConnectionState.done,
+          .done,
           CaptureInfo(
             text: text,
             tokens: tokens,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:stretch_wrap/stretch_wrap.dart';
 
 import 'package:jpnese2u/theme/app_color.dart';
 import 'package:jpnese2u/theme/app_font.dart';
@@ -15,14 +14,13 @@ import 'package:jpnese2u/util/constant/hinshi.dart';
 import 'package:jpnese2u/util/extensions/string_ext.dart';
 import 'package:jpnese2u/util/functions.dart';
 
-class _DepsProvider extends StatelessWidget {
-  const _DepsProvider({
+class SentencePanel extends StatelessWidget {
+  const SentencePanel({
+    super.key,
     required this.sentence,
-    required this.child,
   });
 
   final CaptureSentenceData sentence;
-  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -30,62 +28,54 @@ class _DepsProvider extends StatelessWidget {
       create: (_) => sentence,
       child: BlocProvider(
         create: (_) => SentenceSelectionCubit(sentence),
-        child: child,
+        child: _SentencePanel(),
       ),
     );
   }
 }
 
-class SentenceInfoPanel extends StatelessWidget {
-  const SentenceInfoPanel({super.key, required this.sentence});
-
-  final CaptureSentenceData sentence;
+class _SentencePanel extends StatelessWidget {
+  const _SentencePanel();
 
   @override
   Widget build(BuildContext context) {
-    return _DepsProvider(
-      sentence: sentence,
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColor.white,
-          borderRadius: .circular(12),
-          border: .all(color: AppColor.x1AC8C4D5),
-          boxShadow: kElevationToShadow[1],
-        ),
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: .start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: SelectableText(
-                    sentence.text,
-                    style: AppTextStyle.headline.copyWith(
-                      color: AppColor.xFF1B1B22,
-                      fontFamily: AppFonts.bizUDPGothic.name,
-                    ),
+    final sentence = context.read<CaptureSentenceData>();
+
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColor.white,
+        borderRadius: .circular(12),
+        border: .all(color: AppColor.x1AC8C4D5),
+        boxShadow: kElevationToShadow[1],
+      ),
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: .start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: SelectableText(
+                  sentence.text,
+                  style: AppTextStyle.headline.copyWith(
+                    color: AppColor.xFF1B1B22,
+                    fontFamily: AppFonts.bizUDPGothic.name,
                   ),
                 ),
-                CopyButton(
-                  content: CopyText(
-                    encodePrettyJson(sentence.toJson()),
-                  ),
+              ),
+              CopyButton(
+                content: CopyText(
+                  encodePrettyJson(sentence.toJson()),
                 ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            const Divider(
-              color: AppColor.xFFE4E1EB,
-              height: 1,
-              thickness: 1,
-            ),
-            const SizedBox(height: 16),
-            _SentenceFilterSegment(),
-            const SizedBox(height: 20),
-            _CardsBlock(),
-          ],
-        ),
+              ),
+            ],
+          ),
+          const Divider(color: AppColor.xFFE4E1EB, height: 32),
+          _SentenceFilterSegment(),
+          const SizedBox(height: 20),
+          _CardsBlock(),
+          Divider(color: AppColor.xFFE4E1EB, height: 40),
+        ],
       ),
     );
   }
@@ -100,12 +90,7 @@ class _SentenceFilterSegment extends StatelessWidget {
     final sentence = context.read<CaptureSentenceData>();
     final tokensByHinshi = sentence.selectableTokens.hinshiMapping;
 
-    return BlocSelector<
-      SentenceSelectionCubit,
-      SentenceSelectionState,
-      Set<int>
-    >(
-      selector: (state) => state.selection,
+    return BlocBuilder<SentenceSelectionCubit, SentenceSelectionState>(
       builder: (context, selection) {
         final allSelected = cubit.isAllSelected();
         final noneSelected = cubit.isNoneSelected();
@@ -191,9 +176,7 @@ class _FilterSegmentChip extends StatelessWidget {
       ),
       selected: isSelected,
       onSelected: onSelected,
-      color: WidgetStateColor.resolveWith(
-        (states) => style.bg,
-      ),
+      color: .resolveWith((states) => style.bg),
       side: BorderSide(
         color: isSelected ? style.headerColor : style.borderColor,
         strokeAlign: BorderSide.strokeAlignOutside,
@@ -205,7 +188,7 @@ class _FilterSegmentChip extends StatelessWidget {
       showCheckmark: false,
       padding: .zero,
       labelPadding: .symmetric(horizontal: 8),
-      visualDensity: VisualDensity(horizontal: -4, vertical: -4),
+      visualDensity: .compact,
     );
   }
 }
@@ -218,17 +201,11 @@ class _CardsBlock extends StatelessWidget {
     final cubit = context.sentenceSelectionCubit;
     final sentence = context.read<CaptureSentenceData>();
 
-    return BlocSelector<
-      SentenceSelectionCubit,
-      SentenceSelectionState,
-      Set<int>
-    >(
-      selector: (state) => state.selection,
+    return BlocBuilder<SentenceSelectionCubit, SentenceSelectionState>(
       builder: (context, selection) => DragToSelectRegion(
-        child: StretchWrap(
+        child: Wrap(
           spacing: 8,
           runSpacing: 8,
-          crossRunAlignment: .stretch,
           children: sentence.tokens.map((token) {
             if (token.pos.isPunctuation) {
               return _PunctCard(token: token);

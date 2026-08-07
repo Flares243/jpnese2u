@@ -1,0 +1,90 @@
+{
+  "id": 0,
+  "text": "私は東京大学で日本語を勉強しています。",
+  "tokens": [
+    {
+      "id": 0,
+      "surface": "私",
+      "pos": "代名詞",
+      "reading": "ワタクシ"
+    },
+    {
+      "id": 1,
+      "surface": "は",
+      "pos": "助詞",
+      "reading": "ハ"
+    },
+    {
+      "id": 2,
+      "surface": "東京",
+      "pos": "名詞",
+      "reading": "トウキョウ"
+    },
+    {
+      "id": 3,
+      "surface": "大学",
+      "pos": "名詞",
+      "reading": "ダイガク"
+    },
+    {
+      "id": 4,
+      "surface": "で",
+      "pos": "助詞",
+      "reading": "デ"
+    },
+    {
+      "id": 5,
+      "surface": "日本",
+      "pos": "名詞",
+      "reading": "ニッポン"
+    },
+    {
+      "id": 6,
+      "surface": "語",
+      "pos": "名詞",
+      "reading": "ゴ"
+    },
+    {
+      "id": 7,
+      "surface": "を",
+      "pos": "助詞",
+      "reading": "ヲ"
+    },
+    {
+      "id": 8,
+      "surface": "勉強",
+      "pos": "名詞",
+      "reading": "ベンキョウ"
+    },
+    {
+      "id": 9,
+      "surface": "し",
+      "pos": "動詞",
+      "reading": "スル"
+    },
+    {
+      "id": 10,
+      "surface": "て",
+      "pos": "助詞",
+      "reading": "テ"
+    },
+    {
+      "id": 11,
+      "surface": "い",
+      "pos": "動詞",
+      "reading": "イル"
+    },
+    {
+      "id": 12,
+      "surface": "ます",
+      "pos": "助動詞",
+      "reading": "マス"
+    },
+    {
+      "id": 13,
+      "surface": "。",
+      "pos": "補助記号",
+      "reading": ""
+    }
+  ]
+}

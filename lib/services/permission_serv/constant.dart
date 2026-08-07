@@ -17,10 +17,10 @@ enum MacOSPermissionStatus {
     };
   }
 
-  PermissionStatus? get toPermissionStatus => switch (this) {
+  PermissionStatus get toPermissionStatus => switch (this) {
     MacOSPermissionStatus.authorized => PermissionStatus.granted,
-    MacOSPermissionStatus.denied => PermissionStatus.denied,
+    MacOSPermissionStatus.denied ||
+    MacOSPermissionStatus.notDetermined => PermissionStatus.denied,
     MacOSPermissionStatus.restricted => PermissionStatus.restricted,
-    MacOSPermissionStatus.notDetermined => null,
   };
 }

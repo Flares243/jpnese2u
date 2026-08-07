@@ -1,28 +1,45 @@
-import 'package:flutter/material.dart';
-
+import 'package:flutter/widgets.dart';
+import 'package:get_it/get_it.dart';
+import 'package:jpnese2u/services/capture_serv/interface.dart';
+import 'package:jpnese2u/services/capture_serv/service.dart';
+import 'package:jpnese2u/services/permission_serv/interface.dart';
+import 'package:jpnese2u/services/tokenize_serv/interface.dart';
+import 'package:jpnese2u/services/tokenize_serv/sudachi/service.dart';
+import 'package:jpnese2u/services/window_factory/service.dart';
+import 'package:jpnese2u/ui/root_tray/view.dart';
+import 'package:jpnese2u/util/app_dirents.dart';
 import 'package:window_manager/window_manager.dart';
 
-import 'package:jpnese2u/services/window_factory/service.dart';
-import 'package:jpnese2u/ui/my_app.dart';
-import 'package:jpnese2u/ui/root_deps.dart';
+final getIt = GetIt.instance;
 
 Future<void> main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await windowManager.ensureInitialized();
 
   final windowFactoryServ = WindowFactoryServ();
-  final isRouted = await windowFactoryServ.routing();
+  getIt.registerSingleton<WindowFactoryServ>(windowFactoryServ);
 
-  if (isRouted) return;
+  final handled = await windowFactoryServ.routing();
+  if (handled) return;
 
-  windowManager.waitUntilReadyToShow(null, () async {
-    await windowManager.hide();
-  });
+  windowManager.waitUntilReadyToShow(null, windowManager.hide);
 
-  runApp(
-    RootDependencies(
-      windowFactoryServ: windowFactoryServ,
-      child: const MyApp(),
-    ),
-  );
+  final appDirents = AppDirents();
+  final permissionServ = IPermissionServ.platformInstance();
+  final tokenizer = SudachiTokenizeServ(appDirents: appDirents);
+
+  getIt
+    ..registerSingleton<AppDirents>(appDirents)
+    ..registerSingleton<IPermissionServ>(permissionServ)
+    ..registerSingleton<ITokenizeServ>(tokenizer)
+    ..registerSingleton<ICaptureService>(
+      CaptureServ(appDirents: appDirents),
+    );
+
+  await appDirents.init();
+  await permissionServ.requestScreenRecord();
+  await tokenizer.init();
+
+  await RootTray().initialize();
 }

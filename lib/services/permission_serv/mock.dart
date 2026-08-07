@@ -4,12 +4,12 @@ import 'package:jpnese2u/services/permission_serv/interface.dart';
 
 class MockPermissionServ implements IPermissionServ {
   @override
-  Future<PermissionStatus?> checkScreenRecord() async {
+  Future<PermissionStatus> checkScreenRecord() async {
     return PermissionStatus.granted;
   }
 
   @override
-  Future<PermissionStatus?> requestScreenRecord() async {
+  Future<PermissionStatus> requestScreenRecord() async {
     return PermissionStatus.granted;
   }
 }

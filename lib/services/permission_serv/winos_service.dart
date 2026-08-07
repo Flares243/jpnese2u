@@ -6,12 +6,12 @@ class WinOSPermissionServ implements IPermissionServ {
   const WinOSPermissionServ();
 
   @override
-  Future<PermissionStatus?> checkScreenRecord() async {
+  Future<PermissionStatus> checkScreenRecord() async {
     return PermissionStatus.granted;
   }
 
   @override
-  Future<PermissionStatus?> requestScreenRecord() async {
+  Future<PermissionStatus> requestScreenRecord() async {
     return PermissionStatus.granted;
   }
 }

@@ -1,13 +1,12 @@
+import 'package:jpnese2u/services/tokenize_serv/model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import 'package:jpnese2u/services/tokenize_serv/model.dart';
 import 'package:jpnese2u/util/constant/hinshi.dart';
 import 'package:jpnese2u/util/extensions/string_ext.dart';
 
 part 'model.g.dart';
 part 'model.private.dart';
 
-@JsonSerializable(explicitToJson: true)
 class CaptureInfo {
   final String? text;
   final List<RawToken> tokens;
@@ -18,11 +17,6 @@ class CaptureInfo {
     this.tokens = const [],
     this.sentences = const [],
   });
-
-  factory CaptureInfo.fromJson(Map<String, dynamic> json) =>
-      _$CaptureInfoFromJson(json);
-
-  Map<String, dynamic> toJson() => _$CaptureInfoToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)
@@ -62,24 +56,18 @@ class CaptureTokenData {
     required this.reading,
   });
 
-  factory CaptureTokenData.fromUnidic(int id, UnidicToken source) =>
-      CaptureTokenData(
-        id: id,
-        surface: source.surface,
-        pos: source.pos,
-        reading: source.lemmaReading,
-      );
-
-  factory CaptureTokenData.fromIpadic(int id, IpadicToken source) =>
-      CaptureTokenData(
-        id: id,
-        surface: source.surface,
-        pos: source.pos,
-        reading: source.reading,
-      );
-
   factory CaptureTokenData.fromJson(Map<String, dynamic> json) =>
       _$CaptureTokenDataFromJson(json);
 
   Map<String, dynamic> toJson() => _$CaptureTokenDataToJson(this);
+}
+
+class TokenTranslation {
+  final int id;
+  final String translation;
+
+  const TokenTranslation({
+    required this.id,
+    required this.translation,
+  });
 }

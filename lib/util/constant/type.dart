@@ -1,1 +1,1 @@
-typedef SetStateCallback<T> = T Function(T oldState);
+typedef SetStateCallback<T> = T Function(T state);
