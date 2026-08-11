@@ -107,11 +107,11 @@ class AppTheme {
         shadowColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
       ),
-      cardTheme: CardThemeData(
+      cardTheme: const CardThemeData(
         color: AppColor.white,
         elevation: 0,
         shadowColor: AppColor.x0D000000,
-        shape: const RoundedRectangleBorder(borderRadius: cardRadius),
+        shape: RoundedRectangleBorder(borderRadius: cardRadius),
         clipBehavior: Clip.antiAlias,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -146,25 +146,25 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: false,
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        border: OutlineInputBorder(
+        border: const OutlineInputBorder(
           borderRadius: inputRadius,
-          borderSide: const BorderSide(color: AppColor.xFFE5E7EB),
+          borderSide: BorderSide(color: AppColor.xFFE5E7EB),
         ),
-        enabledBorder: OutlineInputBorder(
+        enabledBorder: const OutlineInputBorder(
           borderRadius: inputRadius,
-          borderSide: const BorderSide(color: AppColor.xFFE5E7EB),
+          borderSide: BorderSide(color: AppColor.xFFE5E7EB),
         ),
-        focusedBorder: OutlineInputBorder(
+        focusedBorder: const OutlineInputBorder(
           borderRadius: inputRadius,
-          borderSide: const BorderSide(color: AppColor.xFF1F108E),
+          borderSide: BorderSide(color: AppColor.xFF1F108E),
         ),
-        errorBorder: OutlineInputBorder(
+        errorBorder: const OutlineInputBorder(
           borderRadius: inputRadius,
-          borderSide: const BorderSide(color: AppColor.xFFBA1A1A),
+          borderSide: BorderSide(color: AppColor.xFFBA1A1A),
         ),
-        focusedErrorBorder: OutlineInputBorder(
+        focusedErrorBorder: const OutlineInputBorder(
           borderRadius: inputRadius,
-          borderSide: const BorderSide(color: AppColor.xFFBA1A1A, width: 1.5),
+          borderSide: BorderSide(color: AppColor.xFFBA1A1A, width: 1.5),
         ),
         hintStyle: TextStyle(
           fontFamily: AppFonts.sfProText.name,

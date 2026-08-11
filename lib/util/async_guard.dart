@@ -11,13 +11,14 @@ FutureOr<AsyncSnapshot<ValueT>> asyncGuard<ValueT>(
   try {
     return AsyncSnapshot.withData(.done, await future());
   } on IgnoredException catch (_) {
-    return AsyncSnapshot.nothing();
+    return const AsyncSnapshot.nothing();
   } on DioException catch (err, st) {
     if (CancelToken.isCancel(err)) {
-      return AsyncSnapshot.nothing();
+      return const AsyncSnapshot.nothing();
     }
 
     if (test == null || test(err)) {
+      print('[asyncGuard] error: $err, stackTrace: $st');
       return AsyncSnapshot.withError(.done, err, st);
     }
 

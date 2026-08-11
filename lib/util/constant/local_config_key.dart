@@ -1,3 +1,3 @@
 class LocalConfigKey {
-  static const String installedDictionaryPath = 'INSTALLED_DICTIONARY_PATH';
+  static const String renshuuApiKey = 'RENSHUU_API_KEY';
 }

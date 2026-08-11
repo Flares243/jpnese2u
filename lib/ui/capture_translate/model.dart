@@ -1,8 +1,8 @@
-import 'package:jpnese2u/services/tokenize_serv/model.dart';
+import 'package:jpnese2u/service/tokenize_serv/model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'package:jpnese2u/util/constant/hinshi.dart';
-import 'package:jpnese2u/util/extensions/string_ext.dart';
+import 'package:jpnese2u/util/extension/string_ext.dart';
 
 part 'model.g.dart';
 part 'model.private.dart';

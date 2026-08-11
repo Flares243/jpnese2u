@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:jpnese2u/services/capture_serv/interface.dart';
-import 'package:jpnese2u/services/download_serv/service.dart';
-import 'package:jpnese2u/services/permission_serv/interface.dart';
-import 'package:jpnese2u/services/tokenize_serv/interface.dart';
-import 'package:jpnese2u/services/window_factory/constant.dart';
-import 'package:jpnese2u/services/window_factory/service.dart';
+import 'package:jpnese2u/service/capture_serv/interface.dart';
+import 'package:jpnese2u/service/download_serv/service.dart';
+import 'package:jpnese2u/service/permission_serv/interface.dart';
+import 'package:jpnese2u/service/tokenize_serv/interface.dart';
+import 'package:jpnese2u/service/window_factory/constant.dart';
+import 'package:jpnese2u/service/window_factory/service.dart';
 import 'package:jpnese2u/ui/root_tray/constant.dart';
 import 'package:jpnese2u/gen/assets.gen.dart';
 import 'package:tray_manager/tray_manager.dart';

@@ -2,14 +2,14 @@ import 'package:flutter/widgets.dart';
 
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jpnese2u/util/extensions/string_ext.dart';
+import 'package:jpnese2u/util/extension/string_ext.dart';
 import 'package:screen_capturer/screen_capturer.dart';
 
-import 'package:jpnese2u/services/ocr_serv/interface.dart';
-import 'package:jpnese2u/services/tokenize_serv/interface.dart';
-import 'package:jpnese2u/services/tokenize_serv/model.dart';
+import 'package:jpnese2u/service/ocr_serv/interface.dart';
+import 'package:jpnese2u/service/tokenize_serv/interface.dart';
+import 'package:jpnese2u/service/tokenize_serv/model.dart';
 import 'package:jpnese2u/ui/capture_translate/model.dart';
-import 'package:jpnese2u/util/extensions/raw_tokens_ext.dart';
+import 'package:jpnese2u/util/extension/raw_tokens_ext.dart';
 
 part 'view_model.g.dart';
 
@@ -30,7 +30,7 @@ class CaptureTranslateVM extends Cubit<CaptureTranslateState> {
     required this.ocrServ,
     required this.tokenizeServ,
   }) : super(
-         CaptureTranslateState(
+         const CaptureTranslateState(
            info: AsyncSnapshot.waiting(),
          ),
        );

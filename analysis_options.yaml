@@ -14,4 +14,4 @@ analyzer:
 
 linter:
   rules:
-    - prefer_const_declarations
+    prefer_const_constructors: true
