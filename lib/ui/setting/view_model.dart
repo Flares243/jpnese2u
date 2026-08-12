@@ -34,16 +34,16 @@ class SettingState with SettingStateMappable {
 }
 
 class SettingVM extends Cubit<SettingState> {
-  final AppDirent appDirents;
-  final IPermissionServ permissionServ;
-  final DownloaderServ downloaderServ;
-  final UserSessionService userSessionService;
+  final AppDirent _appDirents;
+  final IPermissionServ _permissionServ;
+  final DownloaderServ _downloaderServ;
+  final UserSessionService _userSessionService;
 
   SettingVM({
-    required this.appDirents,
-    required this.permissionServ,
-    required this.downloaderServ,
-    required this.userSessionService,
+    required this._appDirents,
+    required this._permissionServ,
+    required this._downloaderServ,
+    required this._userSessionService,
   }) : super(
          const SettingState(
            screenRecordStatus: .denied,
@@ -52,12 +52,12 @@ class SettingVM extends Cubit<SettingState> {
        );
 
   Future<void> init() async {
-    final screenRecordStatus = await permissionServ.checkScreenRecord();
+    final screenRecordStatus = await _permissionServ.checkScreenRecord();
     var newState = state.copyWith(
       screenRecordStatus: screenRecordStatus,
     );
 
-    final dictionaryFile = appDirents.sudachiDictionaryFile;
+    final dictionaryFile = _appDirents.sudachiDictionaryFile;
     if (await dictionaryFile.exists()) {
       newState = newState.copyWith(
         dictionaryStatus: .withData(.done, dictionaryFile.path),
@@ -68,7 +68,7 @@ class SettingVM extends Cubit<SettingState> {
   }
 
   Future<void> requestScreenRecord() async {
-    final status = await permissionServ.requestScreenRecord();
+    final status = await _permissionServ.requestScreenRecord();
     emit(state.copyWith(screenRecordStatus: status));
   }
 
@@ -77,7 +77,7 @@ class SettingVM extends Cubit<SettingState> {
       () async {
         emit(state.copyWith(dictionaryStatus: const .waiting()));
 
-        final snapshot = await downloaderServ.downloadFile(
+        final snapshot = await _downloaderServ.downloadFile(
           url: DartDefine.sudachiDictFullUrl,
         );
 
@@ -86,7 +86,7 @@ class SettingVM extends Cubit<SettingState> {
 
         final bytes = await file.readAsBytes();
         final archive = ZipDecoder().decodeBytes(bytes);
-        final dictionaryFile = appDirents.sudachiDictionaryFile;
+        final dictionaryFile = _appDirents.sudachiDictionaryFile;
 
         for (final entry in archive) {
           if (entry.isFile && FileExt.dic.isMatch(entry.name)) {
@@ -142,7 +142,7 @@ class SettingVM extends Cubit<SettingState> {
 
         if (!isValid) throw Exception('Invalid dictionary file');
 
-        final dictionaryFile = appDirents.sudachiDictionaryFile;
+        final dictionaryFile = _appDirents.sudachiDictionaryFile;
 
         await File(filePath).copy(dictionaryFile.path);
 
@@ -177,14 +177,12 @@ class SettingVM extends Cubit<SettingState> {
 
         if (!isValidKey) throw Exception('Invalid Renshuu API key');
 
-        await userSessionService.saveRenshuuApiKey(key);
+        await _userSessionService.saveRenshuuApiKey(key);
         return true;
       },
     );
 
     if (isClosed) return const .nothing();
-
-    print(snapshot);
 
     return snapshot.fold(
       onData: (data) => .withData(.done, data),

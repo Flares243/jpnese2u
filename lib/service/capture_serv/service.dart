@@ -7,14 +7,14 @@ import 'package:jpnese2u/util/extension/list_ext.dart';
 
 class CaptureServ implements ICaptureService {
   const CaptureServ({
-    required this.appDirents,
+    required this._appDirents,
   });
 
-  final AppDirent appDirents;
+  final AppDirent _appDirents;
 
   @override
   Future<CapturedData?> capture() async {
-    final tempDirPath = appDirents.temporaryDir.path;
+    final tempDirPath = _appDirents.temporaryDir.path;
 
     final captureData = await screenCapturer.capture(
       copyToClipboard: false,

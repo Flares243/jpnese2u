@@ -47,13 +47,13 @@ extension ListRawTokensExt on List<RawToken> {
         id: id,
         text: raw.map((t) => t.surface).join(),
         tokens: [
-          for (final (index, token) in raw.indexed)
+          for (final token in raw)
             if (token is SudachiToken)
-              token.toCaptureTokenData(index)
+              token.toCaptureTokenData()
             else if (token is UnidicToken)
-              token.toCaptureTokenData(index)
+              token.toCaptureTokenData()
             else if (token is IpadicToken)
-              token.toCaptureTokenData(index),
+              token.toCaptureTokenData(),
         ],
       );
 }

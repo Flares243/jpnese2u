@@ -19,8 +19,8 @@ extension SudachiAppDirentsExt on AppDirent {
 }
 
 extension SudachiCaptureTokenDataExt on SudachiToken {
-  CaptureTokenData toCaptureTokenData(int index) => CaptureTokenData(
-    id: index,
+  CaptureTokenData toCaptureTokenData([int? id]) => CaptureTokenData(
+    id: id ?? tokenId,
     surface: surface,
     pos: pos,
     reading: readingForm,

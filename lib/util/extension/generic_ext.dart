@@ -7,3 +7,10 @@ extension GenericExtension<T> on T? {
     return this as T;
   }
 }
+
+extension GenericIterableExtension<T> on Iterable<T> {
+  Iterable<T> separator(T separator) => expand((item) sync* {
+    yield separator;
+    yield item;
+  }).skip(1);
+}

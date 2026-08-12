@@ -1,0 +1,170 @@
+[
+  Morpheme(
+    surface: あっ,
+    dictionaryForm: あっ,
+    normalizedForm: あっ,
+    readingForm: アッ,
+    pos: 感動詞-一般
+  ), 
+  Morpheme(
+    surface: 、,
+    dictionaryForm: 、,
+    normalizedForm: 、,
+    readingForm: 、,
+    pos: 補助記号-読点
+  ), 
+  Morpheme(
+    surface: しかし,
+    dictionaryForm: しかし,
+    normalizedForm: 然し,
+    readingForm: シカシ,
+    pos: 接続詞-*
+  ), 
+  Morpheme(
+    surface: 私,
+    dictionaryForm: 私,
+    normalizedForm: 私,
+    readingForm: ワタクシ,
+    pos: 代名詞-*
+  ), 
+  Morpheme(
+    surface: の,
+    dictionaryForm: の,
+    normalizedForm: の,
+    readingForm: ノ,
+    pos: 助詞-格助詞
+  ), 
+  Morpheme(
+    surface: お,
+    dictionaryForm: お,
+    normalizedForm: 御,
+    readingForm: オ,
+    pos: 接頭辞-*
+  ), 
+  Morpheme(
+    surface: 友達,
+    dictionaryForm: 友達,
+    normalizedForm: 友達,
+    readingForm: トモダチ,
+    pos: 名詞-普通名詞
+  ), 
+  Morpheme(
+    surface: たち,
+    dictionaryForm: たち,
+    normalizedForm: 達,
+    readingForm: タチ,
+    pos: 接尾辞-名詞的
+  ), 
+  Morpheme(
+    surface: は,
+    dictionaryForm: は,
+    normalizedForm: は,
+    readingForm: ハ,
+    pos: 助詞-係助詞
+  ), 
+  Morpheme(
+    surface: 、,
+    dictionaryForm: 、,
+    normalizedForm: 、,
+    readingForm: 、,
+    pos: 補助記号-読点
+  ), 
+  Morpheme(
+    surface: あの,
+    dictionaryForm: あの,
+    normalizedForm: あの,
+    readingForm: アノ,
+    pos: 連体詞-*
+  ), 
+  Morpheme(
+    surface: 静か,
+    dictionaryForm: 静か,
+    normalizedForm: 静か,
+    readingForm: シズカ,
+    pos: 形状詞-一般
+  ), 
+  Morpheme(
+    surface: な,
+    dictionaryForm: だ,
+    normalizedForm: だ,
+    readingForm: ナ,
+    pos: 助動詞-*
+  ), 
+  Morpheme(
+    surface: 美しい,
+    dictionaryForm: 美しい,
+    normalizedForm: 美しい,
+    readingForm: ウツクシイ,
+    pos: 形容詞-一般
+  ), 
+  Morpheme(
+    surface: 公園,
+    dictionaryForm: 公園,
+    normalizedForm: 公園,
+    readingForm: コウエン,
+    pos: 名詞-普通名詞
+  ), 
+  Morpheme(
+    surface: で,
+    dictionaryForm: で,
+    normalizedForm: で,
+    readingForm: デ,
+    pos: 助詞-格助詞
+  ), 
+  Morpheme(
+    surface: とても,
+    dictionaryForm: とても,
+    normalizedForm: 迚も,
+    readingForm: トテモ,
+    pos: 副詞-*
+  ), 
+  Morpheme(
+    surface: 楽し,
+    dictionaryForm: 楽しい,
+    normalizedForm: 楽しい,
+    readingForm: タノシ,
+    pos: 形容詞-一般
+  ), 
+  Morpheme(
+    surface: そう,
+    dictionaryForm: そう,
+    normalizedForm: そう,
+    readingForm: ソウ,
+    pos: 形状詞-助動詞語幹
+  ), 
+  Morpheme(
+    surface: に,
+    dictionaryForm: だ,
+    normalizedForm: だ,
+    readingForm: ニ,
+    pos: 助動詞-*
+  ), 
+  Morpheme(
+    surface: 歌い,
+    dictionaryForm: 歌う,
+    normalizedForm: 歌う,
+    readingForm: ウタイ,
+    pos: 動詞-一般
+  ), 
+  Morpheme(
+    surface: まし,
+    dictionaryForm: ます,
+    normalizedForm: ます,
+    readingForm: マシ,
+    pos: 助動詞-*
+  ), 
+  Morpheme(
+    surface: た,
+    dictionaryForm: た,
+    normalizedForm: た,
+    readingForm: タ,
+    pos: 助動詞-*
+  ), 
+  Morpheme(
+    surface: ！,
+    dictionaryForm: !,
+    normalizedForm: !,
+    readingForm: !,
+    pos: 補助記号-句点
+  )
+]

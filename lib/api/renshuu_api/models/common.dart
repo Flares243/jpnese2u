@@ -9,7 +9,7 @@ class ApiUsageResFieldEntity {
     required this.dailyAllowance,
   });
 
-  @JsonKey(name: "calls_today")
+  @JsonKey(name: "calls_today", fromJson: _callsTodayFromJson)
   final String callsToday;
   @JsonKey(name: "daily_allowance")
   final int dailyAllowance;
@@ -19,3 +19,5 @@ class ApiUsageResFieldEntity {
 
   Map<String, dynamic> toJson() => _$ApiUsageResFieldEntityToJson(this);
 }
+
+String _callsTodayFromJson(dynamic value) => value.toString();

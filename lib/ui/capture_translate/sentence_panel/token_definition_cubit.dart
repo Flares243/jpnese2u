@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:jpnese2u/service/token_definition_serv/interface.dart';
 import 'package:jpnese2u/service/token_definition_serv/model.dart';
+import 'package:jpnese2u/service/tokenize_serv/model.dart';
 import 'package:jpnese2u/ui/capture_translate/model.dart';
 import 'package:jpnese2u/ui/capture_translate/sentence_panel/sentence_selection_cubit.dart';
 import 'package:jpnese2u/util/async_guard.dart';
@@ -12,6 +13,7 @@ import 'package:jpnese2u/util/async_guard.dart';
 typedef TokenDefinitionState = Map<int, AsyncSnapshot<TokenDefinitionData?>>;
 
 class TokenDefinitionCubit extends Cubit<TokenDefinitionState> {
+  final List<RawToken> _rawTokens;
   final CaptureSentenceData _sentenceData;
   final ITokenDefinitionServ _tokenDefService;
 
@@ -21,12 +23,11 @@ class TokenDefinitionCubit extends Cubit<TokenDefinitionState> {
   List<int> get orderedSelectedIds => _orderedSelectedIds;
 
   TokenDefinitionCubit({
-    required CaptureSentenceData sentenceData,
+    required this._rawTokens,
+    required this._sentenceData,
     required SentenceSelectionCubit selectionCubit,
-    required ITokenDefinitionServ service,
-  }) : _sentenceData = sentenceData,
-       _tokenDefService = service,
-       super({}) {
+    required this._tokenDefService,
+  }) : super({}) {
     _selectionSub = selectionCubit.stream.listen(_onSelectionChanged);
   }
 
@@ -52,7 +53,7 @@ class TokenDefinitionCubit extends Cubit<TokenDefinitionState> {
   }
 
   Future<void> _fetchDefinition(int tokenId) async {
-    final token = _sentenceData.tokens.firstWhere((t) => t.id == tokenId);
+    final token = _rawTokens.firstWhere((t) => t.tokenId == tokenId);
 
     final snapshot = await asyncGuard(
       () => _tokenDefService.getDefinitionForToken(token),

@@ -8,17 +8,17 @@ import 'package:jpnese2u/util/constant/type.dart';
 class UserSessionService extends ChangeNotifier {
   static UserSessionService get getInstance => getIt<UserSessionService>();
 
-  final SecureSharedPrefRepo secureSharedPrefRepo;
+  final SecureSharedPrefRepo _secureSharedPrefRepo;
 
   UserSession _userSession = const UserSession();
   UserSession get userSession => _userSession;
 
   UserSessionService({
-    required this.secureSharedPrefRepo,
+    required this._secureSharedPrefRepo,
   });
 
   Future<void> init() async {
-    final renshuuApiKey = await secureSharedPrefRepo.getString(
+    final renshuuApiKey = await _secureSharedPrefRepo.getString(
       LocalConfigKey.renshuuApiKey,
     );
 
@@ -27,7 +27,7 @@ class UserSessionService extends ChangeNotifier {
   }
 
   Future<void> saveRenshuuApiKey(String key) async {
-    await secureSharedPrefRepo.setString(LocalConfigKey.renshuuApiKey, key);
+    await _secureSharedPrefRepo.setString(LocalConfigKey.renshuuApiKey, key);
     _userSession = _userSession.copyWith(renshuuApiKey: key);
     notifyListeners();
   }

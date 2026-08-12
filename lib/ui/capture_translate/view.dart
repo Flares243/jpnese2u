@@ -6,6 +6,7 @@ import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jpnese2u/service/ocr_serv/interface.dart';
 import 'package:jpnese2u/service/tokenize_serv/interface.dart';
+import 'package:jpnese2u/ui/capture_translate/model.dart';
 import 'package:jpnese2u/ui/common/loading_widget.dart';
 import 'package:jpnese2u/util/app_dirent.dart';
 import 'package:screen_capturer/screen_capturer.dart';
@@ -60,13 +61,13 @@ class CaptureTranslateScreen extends StatelessWidget {
                       if (info == null) {
                         return Center(
                           child: Text(
-                            "Error occurred while processing the captured image.",
-                            style: AppTextStyle.headline,
+                            "An error occurred!",
+                            style: AppTextStyle.f24h36.copyWith(
+                              color: AppColor.xFFFF3F3F,
+                            ),
                           ),
                         );
                       }
-
-                      final sentences = info.sentences;
 
                       return Column(
                         spacing: 12,
@@ -74,14 +75,12 @@ class CaptureTranslateScreen extends StatelessWidget {
                         children: [
                           SelectableText(
                             info.text ?? '',
-                            style: AppTextStyle.headline.copyWith(
+                            style: AppTextStyle.f24h32.copyWith(
                               color: AppColor.xFF1B1B22,
-                              fontFamily: AppFonts.bizUDPGothic.name,
+                              fontFamily: AppFonts.bizUDPGothic,
                             ),
                           ),
-                          for (var i = 0; i < sentences.length; i++) ...[
-                            SentencePanel(sentence: sentences[i]),
-                          ],
+                          ..._buildSentenceWidgets(info),
                         ],
                       );
                     },
@@ -93,6 +92,24 @@ class CaptureTranslateScreen extends StatelessWidget {
         );
       },
     );
+  }
+
+  List<Widget> _buildSentenceWidgets(CaptureInfo info) {
+    final sentences = info.sentences;
+    final rawTokens = info.tokens;
+
+    return sentences.map(
+      (sentence) {
+        final sentenceTokensId = sentence.tokens.tokenIds;
+
+        return SentencePanel(
+          sentence: sentence,
+          rawTokens: rawTokens
+              .where((e) => sentenceTokensId.contains(e.tokenId))
+              .toList(),
+        );
+      },
+    ).toList();
   }
 }
 

@@ -5,20 +5,15 @@ import 'package:jpnese2u/service/tokenize_serv/model.dart';
 import 'package:jpnese2u/service/tokenize_serv/sudachi/addons.dart';
 import 'package:jpnese2u/service/tokenize_serv/sudachi/model.dart';
 
-import 'package:jpnese2u/util/app_dirent.dart';
 import 'package:jpnese2u/util/async_guard.dart';
 import 'package:jpnese2u/util/extension/async_snapshot_ext.dart';
 import 'package:sudachi_dart/sudachi_dart.dart';
 
 class SudachiTokenizeServ implements ITokenizeServ {
-  final AppDirent appDirents;
-
   SudachiDictionary? _dictionary;
   SudachiTokenizer? _tokenizer;
 
-  SudachiTokenizeServ({
-    required this.appDirents,
-  });
+  SudachiTokenizeServ();
 
   @override
   bool get isAvailable => _dictionary != null && _tokenizer != null;
@@ -37,8 +32,12 @@ class SudachiTokenizeServ implements ITokenizeServ {
   @override
   Future<List<RawToken>> tokenize(String text) async {
     final tokens = await asyncGuard(() async {
-      final result = await _tokenizer!.tokenize(text);
-      return result.map((e) => SudachiToken.fromMorpheme(e)).toList();
+      final result = await _tokenizer!.tokenize(text, mode: .b);
+
+      return result.indexed.map((e) {
+        final (id, morpheme) = e;
+        return SudachiToken.fromMorpheme(id, morpheme);
+      }).toList();
     });
 
     return tokens.fold(

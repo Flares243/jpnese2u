@@ -3,7 +3,7 @@ import 'package:jpnese2u/ui/capture_translate/model.dart';
 import 'package:mecab_for_dart/mecab_dart.dart';
 
 extension MecabUnidicTokenExt on UnidicToken {
-  static UnidicToken fromMecab(TokenNode rawToken) {
+  static UnidicToken fromMecab(int tokenId, TokenNode rawToken) {
     final features = rawToken.features;
     final surface = rawToken.surface;
 
@@ -14,6 +14,7 @@ extension MecabUnidicTokenExt on UnidicToken {
     final base = f(7);
 
     return UnidicToken(
+      tokenId: tokenId,
       surface: surface,
       pos: pos,
       posSub: f(1),
@@ -35,8 +36,8 @@ extension MecabUnidicTokenExt on UnidicToken {
     );
   }
 
-  CaptureTokenData toCaptureTokenData(int id) => CaptureTokenData(
-    id: id,
+  CaptureTokenData toCaptureTokenData([int? id]) => CaptureTokenData(
+    id: id ?? tokenId,
     surface: surface,
     pos: pos,
     reading: lemmaReading,
@@ -44,7 +45,7 @@ extension MecabUnidicTokenExt on UnidicToken {
 }
 
 extension MecabIpadicTokenExt on IpadicToken {
-  static IpadicToken fromMecab(TokenNode rawToken) {
+  static IpadicToken fromMecab(int tokenId, TokenNode rawToken) {
     final features = rawToken.features;
     final surface = rawToken.surface;
 
@@ -55,6 +56,7 @@ extension MecabIpadicTokenExt on IpadicToken {
     final base = f(6);
 
     return IpadicToken(
+      tokenId: tokenId,
       surface: surface,
       pos: pos,
       posSub: f(1),
@@ -68,8 +70,8 @@ extension MecabIpadicTokenExt on IpadicToken {
     );
   }
 
-  CaptureTokenData toCaptureTokenData(int id) => CaptureTokenData(
-    id: id,
+  CaptureTokenData toCaptureTokenData([int? id]) => CaptureTokenData(
+    id: id ?? tokenId,
     surface: surface,
     pos: pos,
     reading: reading,

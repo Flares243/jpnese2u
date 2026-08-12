@@ -5,11 +5,11 @@ import 'package:platform_ocr/platform_ocr.dart';
 import 'package:jpnese2u/service/ocr_serv/interface.dart';
 
 class MacOSOCRService implements IOCRService {
-  final ocr = PlatformOcr();
+  final _ocr = PlatformOcr();
 
   @override
   Future<String?> textFromBytes(Uint8List bytes) async {
-    final textFromBytes = await ocr.recognizeText(
+    final textFromBytes = await _ocr.recognizeText(
       OcrSource.memory(bytes),
       options: const OcrOptions(
         recognitionLanguages: [OcrLanguage.japanese],

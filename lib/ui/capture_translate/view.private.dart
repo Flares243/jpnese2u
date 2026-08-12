@@ -30,7 +30,7 @@ class _DepsProvider extends StatelessWidget {
             return const Scaffold(body: LoadingWidget());
           }
 
-          return BlocProvider.value(
+          return BlocProvider<CaptureTranslateVM>.value(
             value: vm,
             child: Builder(builder: builder),
           );

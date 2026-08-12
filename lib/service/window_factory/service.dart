@@ -82,7 +82,7 @@ class WindowFactoryServ {
 
     final appDirents = AppDirent();
     final permissionServ = IPermissionServ.platformInstance();
-    final tokenizer = SudachiTokenizeServ(appDirents: appDirents);
+    final tokenizer = SudachiTokenizeServ();
 
     getIt
       ..registerSingleton<AppDirent>(appDirents)
@@ -117,7 +117,7 @@ class WindowFactoryServ {
 
     final appDirents = AppDirent();
     final ocrServ = IOCRService.platformInstance();
-    final tokenizer = SudachiTokenizeServ(appDirents: appDirents);
+    final tokenizer = SudachiTokenizeServ();
 
     final secureSharedPrefRepo = const SecureSharedPrefRepo(
       storage: FlutterSecureStorage(),

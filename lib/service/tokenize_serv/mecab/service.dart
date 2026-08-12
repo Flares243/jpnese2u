@@ -14,19 +14,19 @@ import 'package:jpnese2u/util/app_dirent.dart';
 import 'package:jpnese2u/util/extension/list_ext.dart';
 
 class MecabTokenizeService implements ITokenizeServ {
-  final AppDirent appDirents;
-  final DictionaryType dictionaryType;
+  final AppDirent _appDirents;
+  final DictionaryType _dictionaryType;
 
   Mecab? _tokenizer;
 
   MecabTokenizeService({
-    required this.appDirents,
-    this.dictionaryType = .ipadic,
+    required this._appDirents,
+    this._dictionaryType = .ipadic,
   });
 
   @override
   Future<bool> init() async {
-    final dictPath = await _prepareDictionary(dictionaryType);
+    final dictPath = await _prepareDictionary(_dictionaryType);
     var mecab = await Mecab.create(dictDir: dictPath);
 
     _tokenizer = mecab;
@@ -48,17 +48,21 @@ class MecabTokenizeService implements ITokenizeServ {
 
     final tokens = tokenizer.parse(text);
 
-    return switch (dictionaryType) {
-      DictionaryType.unidic =>
-        tokens.map(MecabUnidicTokenExt.fromMecab).toList(),
-      DictionaryType.ipadic =>
-        tokens.map(MecabIpadicTokenExt.fromMecab).toList(),
-      _ => throw Exception('Unsupported dictionary type: $dictionaryType'),
+    return switch (_dictionaryType) {
+      DictionaryType.unidic => tokens.indexed.map((e) {
+        final (id, token) = e;
+        return MecabUnidicTokenExt.fromMecab(id, token);
+      }).toList(),
+      DictionaryType.ipadic => tokens.indexed.map((e) {
+        final (id, token) = e;
+        return MecabIpadicTokenExt.fromMecab(id, token);
+      }).toList(),
+      _ => throw Exception('Unsupported dictionary type: $_dictionaryType'),
     };
   }
 
   Future<String> _prepareDictionary(DictionaryType dictType) async {
-    final appSupportDir = appDirents.appSupportDir;
+    final appSupportDir = _appDirents.appSupportDir;
 
     final dictPath = [appSupportDir.path, dictType.name].toPath;
     final mecabrcFile = File([dictPath, 'mecabrc'].toPath);

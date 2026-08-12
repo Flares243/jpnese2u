@@ -12,13 +12,13 @@ import 'package:path/path.dart' as path;
 class DownloaderServ {
   static DownloaderServ get getInstance => getIt<DownloaderServ>();
 
-  final Dio dio;
-  final AppDirent appDirents;
+  final Dio _dio;
+  final AppDirent _appDirents;
 
   DownloaderServ({
-    required this.appDirents,
+    required this._appDirents,
     Dio? dio,
-  }) : dio = dio ?? Dio();
+  }) : _dio = dio ?? Dio();
 
   Future<AsyncSnapshot<File>> downloadFile({
     required String url,
@@ -29,14 +29,14 @@ class DownloaderServ {
   }) async {
     return asyncGuard(
       () async {
-        final temporaryDir = appDirents.temporaryDir;
+        final temporaryDir = _appDirents.temporaryDir;
 
         final directoryPath = saveDirPath ?? temporaryDir.path;
         final name =
             fileName ?? url.split('/').lastOrNull?.split('?').firstOrNull;
         final fullFilePath = path.join(directoryPath, name);
 
-        final response = await dio.download(
+        final response = await _dio.download(
           url,
           fullFilePath,
           onReceiveProgress: onProgress,
@@ -57,6 +57,6 @@ class DownloaderServ {
   }
 
   void dispose() {
-    dio.close();
+    _dio.close();
   }
 }

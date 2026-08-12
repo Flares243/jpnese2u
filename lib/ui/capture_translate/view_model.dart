@@ -23,17 +23,13 @@ class CaptureTranslateState {
 }
 
 class CaptureTranslateVM extends Cubit<CaptureTranslateState> {
-  final IOCRService ocrServ;
-  final ITokenizeServ tokenizeServ;
+  final IOCRService _ocrServ;
+  final ITokenizeServ _tokenizeServ;
 
   CaptureTranslateVM({
-    required this.ocrServ,
-    required this.tokenizeServ,
-  }) : super(
-         const CaptureTranslateState(
-           info: AsyncSnapshot.waiting(),
-         ),
-       );
+    required this._ocrServ,
+    required this._tokenizeServ,
+  }) : super(const CaptureTranslateState(info: .waiting()));
 
   Future<void> init(CapturedData capturedData) async {
     String? text;
@@ -42,11 +38,11 @@ class CaptureTranslateVM extends Cubit<CaptureTranslateState> {
     final imageBytes = capturedData.imageBytes;
 
     if (imageBytes != null) {
-      text = await ocrServ.textFromBytes(imageBytes);
+      text = await _ocrServ.textFromBytes(imageBytes);
     }
 
     if (text != null) {
-      tokens = await tokenizeServ.tokenize(text.removeNewLines());
+      tokens = await _tokenizeServ.tokenize(text.removeNewLines());
       if (tokens.isNotEmpty) tokens.removeLast();
     }
 
@@ -54,7 +50,7 @@ class CaptureTranslateVM extends Cubit<CaptureTranslateState> {
 
     emit(
       state.copyWith(
-        info: AsyncSnapshot.withData(
+        info: .withData(
           .done,
           CaptureInfo(
             text: text,
@@ -65,8 +61,4 @@ class CaptureTranslateVM extends Cubit<CaptureTranslateState> {
       ),
     );
   }
-}
-
-extension BuildContextCaptureTranslateVM on BuildContext {
-  CaptureTranslateVM get captureTranslateVM => read<CaptureTranslateVM>();
 }

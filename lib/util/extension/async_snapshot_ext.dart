@@ -16,10 +16,10 @@ extension AsyncSnapshotExtension<T> on AsyncSnapshot<T> {
   }
 
   R? foldOrNull<R>({
-    R Function(Object error, StackTrace? stackTrace)? onError,
-    R Function(T data)? onData,
-    R Function()? onWaiting,
-    R Function()? onNothing,
+    R? Function(Object error, StackTrace? stackTrace)? onError,
+    R? Function(T data)? onData,
+    R? Function()? onWaiting,
+    R? Function()? onNothing,
   }) {
     if (hasError && onError != null) return onError(error!, stackTrace);
     if (hasData && onData != null) return onData(data as T);

@@ -39,6 +39,7 @@ class SudachiToken extends RawToken {
   final String conjugationForm;
 
   const SudachiToken({
+    required super.tokenId,
     required super.surface,
     required this.dictionaryForm,
     required this.normalizedForm,
@@ -51,11 +52,12 @@ class SudachiToken extends RawToken {
     this.conjugationForm = '*',
   });
 
-  factory SudachiToken.fromMorpheme(Morpheme morpheme) {
+  factory SudachiToken.fromMorpheme(int tokenId, Morpheme morpheme) {
     final p = morpheme.partOfSpeech;
     String f(int i) => p.length > i ? p[i] : '*';
 
     return SudachiToken(
+      tokenId: tokenId,
       surface: morpheme.surface,
       dictionaryForm: morpheme.dictionaryForm,
       normalizedForm: morpheme.normalizedForm,

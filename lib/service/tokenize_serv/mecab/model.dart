@@ -60,6 +60,7 @@ class UnidicToken extends RawToken {
   final String fForm;
 
   const UnidicToken({
+    required super.tokenId,
     required super.surface,
     required this.pos,
     required this.posSub,
@@ -116,6 +117,7 @@ class IpadicToken extends RawToken {
   final String pronunciation;
 
   const IpadicToken({
+    required super.tokenId,
     required super.surface,
     required this.pos,
     required this.posSub,

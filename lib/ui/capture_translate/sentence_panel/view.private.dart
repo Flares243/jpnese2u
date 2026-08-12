@@ -3,28 +3,31 @@ part of 'view.dart';
 class _DepsProvider extends StatelessWidget {
   const _DepsProvider({
     required this.sentence,
+    required this.rawTokens,
     required this.builder,
   });
 
   final CaptureSentenceData sentence;
+  final List<RawToken> rawTokens;
   final WidgetBuilder builder;
 
   @override
   Widget build(BuildContext context) {
     final selectionCubit = SentenceSelectionCubit(sentence);
 
-    return RepositoryProvider<CaptureSentenceData>(
-      create: (_) => sentence,
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<CaptureSentenceData>.value(value: sentence),
+      ],
       child: MultiBlocProvider(
         providers: [
-          BlocProvider<SentenceSelectionCubit>.value(
-            value: selectionCubit,
-          ),
+          BlocProvider<SentenceSelectionCubit>.value(value: selectionCubit),
           BlocProvider<TokenDefinitionCubit>.value(
             value: TokenDefinitionCubit(
               sentenceData: sentence,
+              rawTokens: rawTokens,
               selectionCubit: selectionCubit,
-              service: ITokenDefinitionServ.getInstance,
+              tokenDefService: ITokenDefinitionServ.getInstance,
             ),
           ),
         ],
@@ -52,6 +55,30 @@ class _HinshiFilterSegment extends StatelessWidget {
           spacing: 8,
           runSpacing: 8,
           children: [
+            _FilterSegmentChip(
+              text: 'NONE',
+              isSelected: noneSelected,
+              style: Hinshi.unknown.posStyle,
+              onSelected: (selected) {
+                if (selected) {
+                  selectionCubit.deselectAll();
+                } else {
+                  selectionCubit.selectAll();
+                }
+              },
+            ),
+            _FilterSegmentChip(
+              text: 'ALL',
+              isSelected: allSelected,
+              style: Hinshi.unknown.posStyle,
+              onSelected: (selected) {
+                if (selected) {
+                  selectionCubit.selectAll();
+                } else {
+                  selectionCubit.deselectAll();
+                }
+              },
+            ),
             if (tokensByHinshi.isNotEmpty)
               ...tokensByHinshi.entries.map((entry) {
                 final hinshi = entry.key;
@@ -75,30 +102,6 @@ class _HinshiFilterSegment extends StatelessWidget {
                   },
                 );
               }),
-            _FilterSegmentChip(
-              text: 'ALL',
-              isSelected: allSelected,
-              style: Hinshi.unknown.posStyle,
-              onSelected: (selected) {
-                if (selected) {
-                  selectionCubit.selectAll();
-                } else {
-                  selectionCubit.deselectAll();
-                }
-              },
-            ),
-            _FilterSegmentChip(
-              text: 'NONE',
-              isSelected: noneSelected,
-              style: Hinshi.unknown.posStyle,
-              onSelected: (selected) {
-                if (selected) {
-                  selectionCubit.deselectAll();
-                } else {
-                  selectionCubit.selectAll();
-                }
-              },
-            ),
           ],
         );
       },
@@ -123,7 +126,7 @@ class _FilterSegmentChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return FilterChip(
       label: Text(text),
-      labelStyle: AppTextStyle.tokenBadge.copyWith(
+      labelStyle: AppTextStyle.f11h14.copyWith(
         color: style.headerColor,
         fontWeight: .w500,
       ),
@@ -227,29 +230,29 @@ class _TokenChip extends StatelessWidget {
       ),
       padding: const .symmetric(vertical: 8, horizontal: 12),
       child: Column(
-        spacing: 4,
+        spacing: 6,
         mainAxisSize: .min,
         crossAxisAlignment: .start,
         children: [
           Text(
             token.surface,
-            style: AppTextStyle.tokenWord.copyWith(
+            style: AppTextStyle.f20h30.copyWith(
               color: AppColor.xFF1B1B22,
-              fontWeight: .bold,
-              fontFamily: AppFonts.bizUDPGothic.name,
+              fontWeight: .w600,
+              fontFamily: AppFonts.bizUDPGothic,
             ),
           ),
           Text(
             token.reading,
-            style: AppTextStyle.tokenReading.copyWith(
+            style: AppTextStyle.f16h20.copyWith(
               color: AppColor.xFF464553,
-              fontFamily: AppFonts.bizUDPGothic.name,
+              fontFamily: AppFonts.bizUDPGothic,
               letterSpacing: .7,
             ),
           ),
           Text(
             abbreviation,
-            style: AppTextStyle.tokenBadge.copyWith(
+            style: AppTextStyle.f11h14.copyWith(
               color: style.headerColor,
             ),
           ),
@@ -280,28 +283,29 @@ class _PunctChip extends StatelessWidget {
         ),
         padding: const .symmetric(vertical: 8, horizontal: 12),
         child: Column(
-          spacing: 4,
+          spacing: 6,
           mainAxisSize: .min,
           crossAxisAlignment: .start,
           children: [
             Text(
               token.surface,
-              style: AppTextStyle.tokenWord.copyWith(
+              style: AppTextStyle.f20h30.copyWith(
                 color: AppColor.xFF1B1B22,
-                fontWeight: .bold,
-                fontFamily: AppFonts.bizUDPGothic.name,
+                fontWeight: .w600,
+                fontFamily: AppFonts.bizUDPGothic,
               ),
             ),
             Text(
               token.reading,
-              style: AppTextStyle.tokenReading.copyWith(
+              style: AppTextStyle.f16h20.copyWith(
                 color: AppColor.xFF464553,
-                fontFamily: AppFonts.bizUDPGothic.name,
+                fontFamily: AppFonts.bizUDPGothic,
+                letterSpacing: .7,
               ),
             ),
             Text(
               abbreviation,
-              style: AppTextStyle.tokenBadge.copyWith(
+              style: AppTextStyle.f11h14.copyWith(
                 color: style.headerColor,
               ),
             ),
@@ -313,21 +317,23 @@ class _PunctChip extends StatelessWidget {
 }
 
 class _DefinitionCard extends StatelessWidget {
-  const _DefinitionCard({required this.data});
+  const _DefinitionCard({required this.data, required this.hinshi});
 
   final TokenDefinitionData data;
+  final Hinshi hinshi;
 
   @override
   Widget build(BuildContext context) {
-    final heading = data.kanjiForm == data.hiraganaForm
-        ? data.kanjiForm
-        : '${data.kanjiForm} / ${data.hiraganaForm}';
+    final style = hinshi.posStyle;
+    final heading = data.kanji.onNull('').isEmpty
+        ? data.hiragana
+        : '${data.kanji} / ${data.hiragana}';
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColor.xFFF8FAFC,
+        color: style.bg,
         borderRadius: .circular(12),
-        border: .all(color: AppColor.xFFE4E1EB),
+        border: .all(color: style.borderColor),
       ),
       padding: const .all(14),
       child: SingleChildScrollView(
@@ -335,103 +341,58 @@ class _DefinitionCard extends StatelessWidget {
           crossAxisAlignment: .start,
           children: [
             Row(
+              spacing: 2,
+              crossAxisAlignment: .start,
               children: [
                 Expanded(
-                  child: Text(
+                  child: SelectableText(
                     heading ?? '',
-                    style: AppTextStyle.tokenWord.copyWith(
+                    style: AppTextStyle.f20h30.copyWith(
                       color: AppColor.xFF1B1B22,
-                      fontWeight: .bold,
-                      fontFamily: AppFonts.bizUDPGothic.name,
+                      fontWeight: .w600,
+                      fontFamily: AppFonts.bizUDPGothic,
                     ),
-                    maxLines: 2,
-                    overflow: .ellipsis,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Container(
+                  padding: const .symmetric(horizontal: 5, vertical: 1),
+                  decoration: BoxDecoration(
+                    color: hinshi.posStyle.bg,
+                    borderRadius: .circular(4),
+                    border: .all(color: hinshi.posStyle.borderColor),
+                  ),
+                  child: Text(
+                    hinshi.abbreviation,
+                    style: AppTextStyle.f11h14.copyWith(
+                      color: hinshi.posStyle.headerColor,
+                    ),
                   ),
                 ),
               ],
             ),
-            if (data.typeOfSpeech.onNull('').isNotEmpty) ...[
-              const SizedBox(height: 2),
-              Text(
-                '(${data.typeOfSpeech})',
-                style: AppTextStyle.tokenReading.copyWith(
-                  color: AppColor.xFF464553,
-                ),
-              ),
-            ],
-            if (data.pitch.onNull([]).isNotEmpty) ...[
-              const SizedBox(height: 4),
-              Wrap(
-                spacing: 4,
-                children: data.pitch!
-                    .map(
-                      (p) => Container(
-                        padding: const .symmetric(horizontal: 5, vertical: 1),
-                        decoration: BoxDecoration(
-                          color: AppColor.xFFEEF2FF,
-                          borderRadius: .circular(4),
-                          border: .all(color: AppColor.xFFB0BEFF),
-                        ),
-                        child: Text(
-                          p,
-                          style: AppTextStyle.tokenBadge.copyWith(
-                            color: AppColor.xFF312E81,
-                          ),
-                        ),
-                      ),
-                    )
-                    .toList(),
-              ),
-            ],
             if (data.definitions.onNull([]).isNotEmpty) ...[
-              const Divider(height: 16),
-              ...data.definitions!
-                  .take(4)
-                  .indexed
-                  .map(
-                    (entry) => Padding(
-                      padding: const .only(bottom: 4),
-                      child: Text(
-                        '${entry.$1 + 1}.  ${entry.$2}',
-                        style: AppTextStyle.tokenMeaning.copyWith(
-                          color: AppColor.xFF1B1B22,
-                        ),
-                      ),
-                    ),
+              const SizedBox(height: 12),
+              ...data.definitions!.map(
+                (e) => SelectableText(
+                  '- $e',
+                  style: AppTextStyle.f14h21.copyWith(
+                    color: AppColor.xFF1B1B22,
                   ),
-              if (data.definitions!.length > 4)
-                Text(
-                  '…',
-                  style: AppTextStyle.tokenMeaning.copyWith(
-                    color: AppColor.xFF464553,
-                  ),
-                ),
-            ],
-
-            if (data.alternates.onNull([]).isNotEmpty) ...[
-              const Divider(height: 16),
-              Text(
-                'Compare with',
-                style: AppTextStyle.tokenBadge.copyWith(
-                  color: AppColor.xFF464553,
-                  letterSpacing: .6,
                 ),
               ),
+            ],
+            if (data.alternates.onNull([]).isNotEmpty) ...[
+              const SizedBox(height: 12),
+              const Text('Also written as:'),
               const SizedBox(height: 4),
-              ...data.alternates!
-                  .take(3)
-                  .map(
-                    (a) => Padding(
-                      padding: const .only(bottom: 2),
-                      child: Text(
-                        a.term ?? '',
-                        style: AppTextStyle.tokenReading.copyWith(
-                          color: AppColor.xFF3B35A7,
-                          fontFamily: AppFonts.bizUDPGothic.name,
-                        ),
-                      ),
-                    ),
-                  ),
+              Padding(
+                padding: const .only(bottom: 2),
+                child: SelectableText(
+                  data.alternates!.map((e) => e.term).join(' / '),
+                  style: AppTextStyle.f14h21,
+                ),
+              ),
             ],
           ],
         ),
@@ -441,32 +402,39 @@ class _DefinitionCard extends StatelessWidget {
 }
 
 class _DefinitionLoadingCard extends StatelessWidget {
-  const _DefinitionLoadingCard();
+  const _DefinitionLoadingCard({required this.style});
+
+  final PosStyle style;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColor.xFFF8FAFC,
+        color: style.bg,
         borderRadius: .circular(12),
-        border: .all(color: AppColor.xFFE4E1EB),
+        border: .all(color: style.borderColor),
       ),
       alignment: .center,
-      child: const CircularProgressIndicator(strokeWidth: 2),
+      child: CircularProgressIndicator(
+        strokeWidth: 2,
+        color: style.headerColor,
+      ),
     );
   }
 }
 
 class _DefinitionErrorCard extends StatelessWidget {
-  const _DefinitionErrorCard();
+  const _DefinitionErrorCard({required this.style});
+
+  final PosStyle style;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColor.xFFF8FAFC,
+        color: style.bg,
         borderRadius: .circular(12),
-        border: .all(color: AppColor.xFFE4E1EB),
+        border: .all(color: style.borderColor),
       ),
       padding: const .all(14),
       alignment: .center,
@@ -474,41 +442,11 @@ class _DefinitionErrorCard extends StatelessWidget {
         mainAxisSize: .min,
         spacing: 6,
         children: [
-          const Icon(Icons.error_outline, color: AppColor.xFF464553, size: 20),
+          Icon(Icons.error_outline, color: style.headerColor, size: 20),
           Text(
-            'Couldn\'t load',
-            style: AppTextStyle.tokenBadge.copyWith(
-              color: AppColor.xFF464553,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DefinitionEmptyCard extends StatelessWidget {
-  const _DefinitionEmptyCard();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColor.xFFF8FAFC,
-        borderRadius: .circular(12),
-        border: .all(color: AppColor.xFFE4E1EB),
-      ),
-      padding: const .all(14),
-      alignment: .center,
-      child: Column(
-        mainAxisSize: .min,
-        spacing: 6,
-        children: [
-          const Icon(Icons.search_off, color: AppColor.xFF464553, size: 20),
-          Text(
-            'No results',
-            style: AppTextStyle.tokenBadge.copyWith(
-              color: AppColor.xFF464553,
+            'An error occurred.',
+            style: AppTextStyle.f14h21.copyWith(
+              color: style.headerColor,
             ),
           ),
         ],

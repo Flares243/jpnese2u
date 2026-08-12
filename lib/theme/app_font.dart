@@ -1,10 +1,7 @@
-enum AppFonts {
-  jetbrainsMono('JetBrainsMono'),
-  sfProText('SF Pro Text'),
-  bizUDPGothic('BIZUDPGothic'),
-  ;
-
-  const AppFonts(this.name);
-
-  final String name;
+class AppFonts {
+  static const jetbrainsMono = 'JetBrainsMono';
+  static const sfProText = 'SF Pro Text';
+  static const bizUDPGothic = 'BIZUDPGothic';
+  static const notoSansJP = 'Noto Sans JP';
+  static const notoSansSymbols2 = 'Noto Sans Symbols 2';
 }
