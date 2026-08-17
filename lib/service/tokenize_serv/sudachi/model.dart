@@ -1,6 +1,7 @@
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:dart_mappable/dart_mappable.dart';
 import 'package:jpnese2u/service/tokenize_serv/model.dart';
+import 'package:jpnese2u/ui/capture_translate/model.dart';
 import 'package:sudachi_dart/sudachi_dart.dart';
 
 part 'model.g.dart';
@@ -70,4 +71,12 @@ class SudachiToken extends RawToken {
       conjugationForm: f(5),
     );
   }
+
+  @override
+  CaptureTokenData toCaptureTokenData([int? id]) => CaptureTokenData(
+    id: id ?? tokenId,
+    surface: surface,
+    pos: pos,
+    reading: readingForm,
+  );
 }

@@ -1,7 +1,5 @@
-import 'package:jpnese2u/service/tokenize_serv/mecab/addons.dart';
 import 'package:jpnese2u/service/tokenize_serv/mecab/model.dart';
 import 'package:jpnese2u/service/tokenize_serv/model.dart';
-import 'package:jpnese2u/service/tokenize_serv/sudachi/addons.dart';
 import 'package:jpnese2u/service/tokenize_serv/sudachi/model.dart';
 import 'package:jpnese2u/ui/capture_translate/model.dart';
 import 'package:jpnese2u/util/constant/constant.dart';
@@ -29,6 +27,8 @@ extension ListRawTokensExt on List<RawToken> {
         } else if (buffer.last is IpadicToken) {
           buffer[buffer.length - 1] = (buffer.last as IpadicToken).copyWith
               .surface(buffer.last.surface + token.surface);
+        } else {
+          buffer.add(token);
         }
       } else {
         buffer.add(token);
@@ -46,14 +46,6 @@ extension ListRawTokensExt on List<RawToken> {
       CaptureSentenceData(
         id: id,
         text: raw.map((t) => t.surface).join(),
-        tokens: [
-          for (final token in raw)
-            if (token is SudachiToken)
-              token.toCaptureTokenData()
-            else if (token is UnidicToken)
-              token.toCaptureTokenData()
-            else if (token is IpadicToken)
-              token.toCaptureTokenData(),
-        ],
+        tokens: [for (final token in raw) token.toCaptureTokenData()],
       );
 }

@@ -6,7 +6,6 @@ import 'package:jpnese2u/service/token_definition_serv/model.dart';
 import 'package:jpnese2u/service/tokenize_serv/sudachi/model.dart';
 import 'package:jpnese2u/util/async_guard.dart';
 import 'package:jpnese2u/util/extension/async_snapshot_ext.dart';
-import 'package:jpnese2u/util/function/common.dart';
 
 class RenshuuTokenDefinitionServ implements ITokenDefinitionServ<SudachiToken> {
   final RenshuuApi _api;
@@ -27,10 +26,7 @@ class RenshuuTokenDefinitionServ implements ITokenDefinitionServ<SudachiToken> {
     );
 
     return snapshot.foldOrNull(
-      onData: (result) {
-        printPrettyJson(result.words?.firstOrNull?.toJson());
-        return result.words?.firstOrNull?.toTokenDefinitionData();
-      },
+      onData: (result) => result.words?.firstOrNull?.toTokenDefinitionData(),
     );
   }
 }

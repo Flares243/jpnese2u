@@ -2,6 +2,8 @@ flutter clean
 flutter run -d macos --dart-define-from-file dart_define/main.json
 flutter run -d windows --dart-define-from-file dart_define/main.json
 
+flutter build macos --dart-define-from-file dart_define/main.json --release
+
 dart run build_runner build
 
 /Users/chuongcao/Library/Application Support/com.chuongcao.jpnese2u/

@@ -244,7 +244,7 @@ class _TokenChip extends StatelessWidget {
           ),
           Text(
             token.reading,
-            style: AppTextStyle.f16h20.copyWith(
+            style: AppTextStyle.f18h27.copyWith(
               color: AppColor.xFF464553,
               fontFamily: AppFonts.bizUDPGothic,
               letterSpacing: .7,
@@ -293,14 +293,6 @@ class _PunctChip extends StatelessWidget {
                 color: AppColor.xFF1B1B22,
                 fontWeight: .w600,
                 fontFamily: AppFonts.bizUDPGothic,
-              ),
-            ),
-            Text(
-              token.reading,
-              style: AppTextStyle.f16h20.copyWith(
-                color: AppColor.xFF464553,
-                fontFamily: AppFonts.bizUDPGothic,
-                letterSpacing: .7,
               ),
             ),
             Text(

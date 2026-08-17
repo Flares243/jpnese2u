@@ -39,3 +39,28 @@ class _DepsProvider extends StatelessWidget {
     );
   }
 }
+
+class _CaptureImage extends StatelessWidget {
+  const _CaptureImage({required this.imageBytes});
+
+  final Uint8List imageBytes;
+
+  @override
+  Widget build(BuildContext context) {
+    final tempDir = AppDirent.getInstance;
+    final windowId = context.read<WindowController>().windowId;
+    final path = "$tempDir/capture_translate_$windowId.png";
+
+    return CopyRegion(
+      content: CopyFile(
+        path: path,
+        bytes: imageBytes,
+      ),
+      copyButtonTooltip: "Copy image to clipboard",
+      child: Image.memory(
+        imageBytes,
+        fit: .contain,
+      ),
+    );
+  }
+}

@@ -9,4 +9,6 @@ const kRootTrayChannel = WindowMethodChannel(
 
 class RootTrayMethod {
   static const reloadTokenizer = 'reloadTokenizer';
+  static const reloadUserSession = 'reloadUserSession';
+  static const reloadTray = 'reloadTray';
 }

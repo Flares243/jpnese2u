@@ -135,6 +135,10 @@ class __RenshuuApiKeyInputState extends State<_RenshuuApiKeyInput> {
           child: TextField(
             controller: _controller,
             obscureText: true,
+            decoration: const InputDecoration(
+              labelText: 'Renshuu API Key',
+              border: OutlineInputBorder(),
+            ),
           ),
         ),
         const SizedBox(width: 12),

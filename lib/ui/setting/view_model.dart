@@ -11,6 +11,7 @@ import 'package:jpnese2u/service/download_serv/service.dart';
 import 'package:jpnese2u/service/permission_serv/interface.dart';
 import 'package:jpnese2u/service/tokenize_serv/sudachi/addons.dart';
 import 'package:jpnese2u/service/user_session/service.dart';
+import 'package:jpnese2u/service/window_factory/constant.dart';
 import 'package:jpnese2u/util/app_dirent.dart';
 import 'package:jpnese2u/util/async_guard.dart';
 import 'package:jpnese2u/util/constant/file_extension.dart';
@@ -109,6 +110,7 @@ class SettingVM extends Cubit<SettingState> {
 
     result.fold(
       onData: (data) {
+        kRootTrayChannel.invokeMethod(RootTrayMethod.reloadTokenizer);
         emit(
           state.copyWith(
             dictionaryStatus: .withData(.done, data),
@@ -154,6 +156,8 @@ class SettingVM extends Cubit<SettingState> {
 
     result.fold(
       onData: (data) {
+        kRootTrayChannel.invokeMethod(RootTrayMethod.reloadTokenizer);
+
         emit(
           state.copyWith(
             dictionaryStatus: .withData(.done, data),
@@ -178,6 +182,8 @@ class SettingVM extends Cubit<SettingState> {
         if (!isValidKey) throw Exception('Invalid Renshuu API key');
 
         await _userSessionService.saveRenshuuApiKey(key);
+        kRootTrayChannel.invokeMethod(RootTrayMethod.reloadUserSession);
+
         return true;
       },
     );

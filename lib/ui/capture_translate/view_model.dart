@@ -43,7 +43,6 @@ class CaptureTranslateVM extends Cubit<CaptureTranslateState> {
 
     if (text != null) {
       tokens = await _tokenizeServ.tokenize(text.removeNewLines());
-      if (tokens.isNotEmpty) tokens.removeLast();
     }
 
     final sentences = tokens.toSentences();

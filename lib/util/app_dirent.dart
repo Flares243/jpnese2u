@@ -25,6 +25,7 @@ class AppDirent {
       await temporaryDirectory.create(recursive: true);
     }
     temporaryDir = temporaryDirectory;
+    print('Temporary directory: ${temporaryDir.path}');
   }
 
   Future<void> _initApplicationSupportDir() async {
@@ -35,6 +36,7 @@ class AppDirent {
       await applicationSupportDirectory.create(recursive: true);
     }
     appSupportDir = applicationSupportDirectory;
+    print('Application support directory: ${appSupportDir.path}');
   }
 
   Future<void> _initApplicationDocumentsDirectory() async {
@@ -46,5 +48,6 @@ class AppDirent {
       await applicationDocumentsDirectory.create(recursive: true);
     }
     appDocumentsDir = applicationDocumentsDirectory;
+    print('Application documents directory: ${appDocumentsDir.path}');
   }
 }

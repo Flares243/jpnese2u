@@ -48,6 +48,8 @@ class MecabTokenizeService implements ITokenizeServ {
 
     final tokens = tokenizer.parse(text);
 
+    if (tokens.isNotEmpty) tokens.removeLast();
+
     return switch (_dictionaryType) {
       DictionaryType.unidic => tokens.indexed.map((e) {
         final (id, token) = e;

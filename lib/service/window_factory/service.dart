@@ -84,6 +84,13 @@ class WindowFactoryServ {
     final permissionServ = IPermissionServ.platformInstance();
     final tokenizer = SudachiTokenizeServ();
 
+    final secureSharedPrefRepo = const SecureSharedPrefRepo(
+      storage: FlutterSecureStorage(),
+    );
+    final userSessionService = UserSessionService(
+      secureSharedPrefRepo: secureSharedPrefRepo,
+    );
+
     getIt
       ..registerSingleton<AppDirent>(appDirents)
       ..registerSingleton<IPermissionServ>(permissionServ)
@@ -93,11 +100,13 @@ class WindowFactoryServ {
       )
       ..registerSingleton<ICaptureService>(
         CaptureServ(appDirents: appDirents),
-      );
+      )
+      ..registerSingleton<UserSessionService>(userSessionService);
 
     await appDirents.init();
     await permissionServ.requestScreenRecord();
     await tokenizer.init();
+    await userSessionService.init();
 
     await RootTray().initialize();
   }

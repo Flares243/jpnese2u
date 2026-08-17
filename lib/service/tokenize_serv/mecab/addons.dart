@@ -1,5 +1,4 @@
 import 'package:jpnese2u/service/tokenize_serv/mecab/model.dart';
-import 'package:jpnese2u/ui/capture_translate/model.dart';
 import 'package:mecab_for_dart/mecab_dart.dart';
 
 extension MecabUnidicTokenExt on UnidicToken {
@@ -35,13 +34,6 @@ extension MecabUnidicTokenExt on UnidicToken {
       fForm: f(16),
     );
   }
-
-  CaptureTokenData toCaptureTokenData([int? id]) => CaptureTokenData(
-    id: id ?? tokenId,
-    surface: surface,
-    pos: pos,
-    reading: lemmaReading,
-  );
 }
 
 extension MecabIpadicTokenExt on IpadicToken {
@@ -69,11 +61,4 @@ extension MecabIpadicTokenExt on IpadicToken {
       pronunciation: f(8),
     );
   }
-
-  CaptureTokenData toCaptureTokenData([int? id]) => CaptureTokenData(
-    id: id ?? tokenId,
-    surface: surface,
-    pos: pos,
-    reading: reading,
-  );
 }

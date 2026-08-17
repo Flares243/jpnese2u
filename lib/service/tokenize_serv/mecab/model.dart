@@ -1,5 +1,6 @@
 import 'package:copy_with_extension/copy_with_extension.dart';
 import 'package:jpnese2u/service/tokenize_serv/model.dart';
+import 'package:jpnese2u/ui/capture_translate/model.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'model.g.dart';
@@ -85,6 +86,14 @@ class UnidicToken extends RawToken {
       _$UnidicTokenFromJson(json);
 
   Map<String, dynamic> toJson() => _$UnidicTokenToJson(this);
+
+  @override
+  CaptureTokenData toCaptureTokenData([int? id]) => CaptureTokenData(
+    id: id ?? tokenId,
+    surface: surface,
+    pos: pos,
+    reading: lemmaReading,
+  );
 }
 
 // IPADIC standard 9-field feature indices:
@@ -134,4 +143,12 @@ class IpadicToken extends RawToken {
       _$IpadicTokenFromJson(json);
 
   Map<String, dynamic> toJson() => _$IpadicTokenToJson(this);
+
+  @override
+  CaptureTokenData toCaptureTokenData([int? id]) => CaptureTokenData(
+    id: id ?? tokenId,
+    surface: surface,
+    pos: pos,
+    reading: reading,
+  );
 }

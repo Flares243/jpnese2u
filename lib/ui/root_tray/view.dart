@@ -1,13 +1,17 @@
 import 'dart:io';
+import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:jpnese2u/service/capture_serv/interface.dart';
-import 'package:jpnese2u/service/download_serv/service.dart';
 import 'package:jpnese2u/service/permission_serv/interface.dart';
 import 'package:jpnese2u/service/tokenize_serv/interface.dart';
+import 'package:jpnese2u/service/user_session/service.dart';
 import 'package:jpnese2u/service/window_factory/constant.dart';
 import 'package:jpnese2u/service/window_factory/service.dart';
 import 'package:jpnese2u/ui/root_tray/constant.dart';
 import 'package:jpnese2u/gen/assets.gen.dart';
+import 'package:jpnese2u/util/extension/generic_ext.dart';
 import 'package:tray_manager/tray_manager.dart';
 
 class RootTray with TrayListener {
@@ -25,6 +29,15 @@ class RootTray with TrayListener {
           await ITokenizeServ.getInstance.init();
           _loadContextMenu();
           break;
+
+        case RootTrayMethod.reloadUserSession:
+          await UserSessionService.getInstance.init();
+          _loadContextMenu();
+          break;
+
+        case RootTrayMethod.reloadTray:
+          _loadContextMenu();
+          break;
       }
     });
   }
@@ -36,12 +49,17 @@ class RootTray with TrayListener {
 
   Future<void> _loadContextMenu() async {
     final permissionServ = IPermissionServ.getInstance;
-    final tokenizer = ITokenizeServ.getInstance;
+    final tokenizerServ = ITokenizeServ.getInstance;
+    final userSessionServ = UserSessionService.getInstance;
 
     final screenRecordPermission = await permissionServ.checkScreenRecord();
     final canRecordScreen = screenRecordPermission == .granted;
+    final haveRenshuuApiKey = userSessionServ.userSession.renshuuApiKey
+        .onNull('')
+        .isNotEmpty;
 
-    final requirements = canRecordScreen && tokenizer.isAvailable;
+    final requirements =
+        canRecordScreen && tokenizerServ.isAvailable && haveRenshuuApiKey;
 
     await trayManager.setContextMenu(
       Menu(
@@ -57,17 +75,20 @@ class RootTray with TrayListener {
             label: MenuItemEnum.settings.label,
             onClick: (_) => WindowFactoryServ.getInstance.showSettingsWindow(),
           ),
-          MenuItem(
-            key: MenuItemEnum.debug.name,
-            label: MenuItemEnum.debug.label,
-            onClick: (_) {
-              print(
-                tokenizer.isAvailable
-                    ? 'Sudachi tokenizer is available'
-                    : 'Sudachi tokenizer is not available',
-              );
-            },
-          ),
+          if (!kReleaseMode)
+            MenuItem(
+              key: MenuItemEnum.debug.name,
+              label: MenuItemEnum.debug.label,
+              onClick: (_) {
+                // const FlutterSecureStorage().deleteAll();
+
+                print('Can Record Screen: $canRecordScreen');
+                print('Tokenizer Available: ${tokenizerServ.isAvailable}');
+                print(
+                  'UserSession: ${UserSessionService.getInstance.userSession.toJson()}',
+                );
+              },
+            ),
           MenuItem.separator(),
           MenuItem(
             key: MenuItemEnum.exit.name,
@@ -86,9 +107,10 @@ class RootTray with TrayListener {
     WindowFactoryServ.getInstance.showCaptureTranslateWindow(capturedData);
   }
 
-  void _onExit() {
-    DownloaderServ.getInstance.dispose();
+  Future<void> _onExit() async {
     trayManager.removeListener(this);
+
+    await ServicesBinding.instance.exitApplication(AppExitType.required);
     exit(0);
   }
 }
