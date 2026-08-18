@@ -1,8 +1,8 @@
 name: jpnese2u
-description: "A new Flutter project."
+description: "jpnese2u is a desktop app that helps you learn Japanese passively. Capture any text on your screen and instantly see each word broken down with its meaning while reading manga, watching shows, or browsing the web without leaving your current app."
 publish_to: "none"
 
-version: 1.0.0+1
+version: 0.0.1
 
 environment:
   sdk: ^3.12.2
