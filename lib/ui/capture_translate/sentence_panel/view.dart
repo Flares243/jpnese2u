@@ -6,9 +6,10 @@ import 'package:jpnese2u/service/tokenize_serv/model.dart';
 import 'package:jpnese2u/theme/app_color.dart';
 import 'package:jpnese2u/theme/app_font.dart';
 import 'package:jpnese2u/theme/app_text_style.dart';
+import 'package:jpnese2u/ui/capture_translate/definition_drawer_cubit.dart';
 import 'package:jpnese2u/ui/capture_translate/model.dart';
 import 'package:jpnese2u/service/token_definition_serv/interface.dart';
-import 'package:jpnese2u/service/token_definition_serv/model.dart';
+import 'package:jpnese2u/ui/capture_translate/sentence_panel/definition_card.dart';
 import 'package:jpnese2u/ui/capture_translate/sentence_panel/sentence_selection_cubit.dart';
 import 'package:jpnese2u/ui/capture_translate/sentence_panel/token_definition_cubit.dart';
 import 'package:jpnese2u/ui/common/copy_region/copy_region.dart';
@@ -108,38 +109,40 @@ class _DefinitionsSegment extends StatelessWidget {
               height: 300.0,
               child: ListView(
                 scrollDirection: .horizontal,
-                children: orderedIds
-                    .map((id) {
-                      final snapshot = defState[id].onNull(const .nothing());
-                      final token = sentence.tokens.firstWhere(
-                        (t) => t.id == id,
-                      );
-                      final hinshi = Hinshi.fromJp(token.pos) ?? .unknown;
-                      final posStyle = hinshi.posStyle;
+                children: orderedIds.map((id) {
+                  final snapshot = defState[id].onNull(const .nothing());
+                  final token = sentence.tokens.firstWhere((t) => t.id == id);
+                  final hinshi = Hinshi.fromJp(token.pos) ?? .unknown;
+                  final posStyle = hinshi.posStyle;
 
-                      final cardWidget = snapshot.foldOrNull(
-                        onData: (data) => _DefinitionCard(
-                          data: data!,
-                          hinshi: hinshi,
-                        ),
-                        onWaiting: () =>
-                            _DefinitionLoadingCard(style: posStyle),
-                        onError: (_, _) =>
-                            _DefinitionErrorCard(style: posStyle),
-                      );
+                  final cardWidget = snapshot.foldOrNull(
+                    onData: (data) {
+                      if (data == null || data.isEmpty) return null;
 
-                      if (cardWidget != null) {
-                        return Padding(
-                          padding: const .symmetric(horizontal: 4),
-                          child: SizedBox(
-                            width: 280.0,
-                            child: cardWidget,
-                          ),
-                        );
-                      }
-                    })
-                    .nonNulls
-                    .toList(),
+                      return DefinitionCard(
+                        data: data.first,
+                        hinshi: hinshi,
+                        onShowMorePressed: data.length > 1
+                            ? () {
+                                context.read<DefinitionDrawerCubit>().show(
+                                  definitions: data,
+                                  hinshi: hinshi,
+                                );
+
+                                Scaffold.of(context).openEndDrawer();
+                              }
+                            : null,
+                      );
+                    },
+                    onWaiting: () => _DefinitionLoadingCard(style: posStyle),
+                    onError: (_, _) => _DefinitionErrorCard(style: posStyle),
+                  );
+
+                  return Padding(
+                    padding: const .symmetric(horizontal: 4),
+                    child: SizedBox(width: 320.0, child: cardWidget),
+                  );
+                }).toList(),
               ),
             ),
           ],

@@ -26,7 +26,6 @@ import 'package:jpnese2u/util/app_dirent.dart';
 import 'package:screen_capturer/screen_capturer.dart';
 import 'package:window_manager/window_manager.dart';
 
-import 'package:jpnese2u/service/window_factory/constant.dart';
 import 'package:jpnese2u/service/window_factory/model.dart';
 import 'package:jpnese2u/theme/app_theme.dart';
 import 'package:jpnese2u/ui/capture_translate/view.dart';
@@ -44,13 +43,12 @@ class WindowFactoryServ {
       final windowArgs = WindowArguments.fromJson(
         jsonDecode(windowController.arguments) as Map<String, dynamic>,
       );
-      final windowType = windowArgs.type;
 
-      switch (windowType) {
-        case WindowType.screenshot:
-          _showCaptureTranslateWindow(windowController);
+      switch (windowArgs) {
+        case CaptureTranslateWindowArguments():
+          _showCaptureTranslateWindow(windowController, windowArgs);
 
-        case WindowType.settings:
+        case SettingWindowArguments():
           _showSettingsWindow(windowController);
       }
     } else {
@@ -60,7 +58,6 @@ class WindowFactoryServ {
 
   Future<void> showCaptureTranslateWindow(CapturedData data) async {
     final args = CaptureTranslateWindowArguments(
-      type: WindowType.screenshot,
       capturedData: data,
     );
 
@@ -70,7 +67,7 @@ class WindowFactoryServ {
   }
 
   Future<void> showSettingsWindow() async {
-    final args = const WindowArguments(type: WindowType.settings);
+    const args = SettingWindowArguments();
 
     await WindowController.create(
       WindowConfiguration(arguments: jsonEncode(args.toJson())),
@@ -98,9 +95,7 @@ class WindowFactoryServ {
         tokenizer,
         dispose: (param) => param.dispose(),
       )
-      ..registerSingleton<ICaptureService>(
-        CaptureServ(appDirents: appDirents),
-      )
+      ..registerSingleton<ICaptureService>(CaptureServ(appDirents: appDirents))
       ..registerSingleton<UserSessionService>(userSessionService);
 
     await appDirents.init();
@@ -111,11 +106,10 @@ class WindowFactoryServ {
     await RootTray().initialize();
   }
 
-  void _showCaptureTranslateWindow(WindowController windowController) async {
-    final screenshotArgs = CaptureTranslateWindowArguments.fromJson(
-      jsonDecode(windowController.arguments) as Map<String, dynamic>,
-    );
-
+  void _showCaptureTranslateWindow(
+    WindowController windowController,
+    CaptureTranslateWindowArguments screenshotArgs,
+  ) async {
     windowManager.waitUntilReadyToShow(
       const WindowOptions(size: kDefaultWindowSize, center: true),
       () async {
@@ -148,7 +142,7 @@ class WindowFactoryServ {
     await tokenizer.init();
     await userSessionService.init();
 
-    final tokenDefinitionServ = RenshuuTokenDefinitionServ(
+    final tokenDefinitionServ = RenshuuServ(
       api: RenshuuApi(
         RenshuuDio(
           renshuuApiKey: userSessionService.userSession.renshuuApiKey!,
@@ -156,7 +150,10 @@ class WindowFactoryServ {
       ),
     );
 
-    getIt.registerSingleton<ITokenDefinitionServ>(tokenDefinitionServ);
+    getIt.registerSingleton<ITokenDefinitionServ>(
+      tokenDefinitionServ,
+      dispose: (param) => param.dispose(),
+    );
 
     runApp(
       MaterialApp(

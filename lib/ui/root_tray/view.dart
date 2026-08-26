@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:jm_dict/jm_dict.dart';
 import 'package:jpnese2u/service/capture_serv/interface.dart';
 import 'package:jpnese2u/service/permission_serv/interface.dart';
 import 'package:jpnese2u/service/tokenize_serv/interface.dart';
@@ -79,8 +80,16 @@ class RootTray with TrayListener {
             MenuItem(
               key: MenuItemEnum.debug.name,
               label: MenuItemEnum.debug.label,
-              onClick: (_) {
+              onClick: (_) async {
                 // const FlutterSecureStorage().deleteAll();
+                final dict = JMDict();
+                await dict.initFromAsset(
+                  assetPath: Assets.dictionaries.jMdictENG,
+                );
+                dict.removeCachedFiles();
+                dict.clearObjectBoxData();
+
+                dict.close();
 
                 print('Can Record Screen: $canRecordScreen');
                 print('Tokenizer Available: ${tokenizerServ.isAvailable}');

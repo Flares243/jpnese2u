@@ -14,6 +14,8 @@ import 'package:screen_capturer/screen_capturer.dart';
 import 'package:jpnese2u/theme/app_color.dart';
 import 'package:jpnese2u/theme/app_font.dart';
 import 'package:jpnese2u/theme/app_text_style.dart';
+import 'package:jpnese2u/ui/capture_translate/definition_drawer_cubit.dart';
+import 'package:jpnese2u/ui/capture_translate/sentence_panel/definition_card.dart';
 import 'package:jpnese2u/ui/capture_translate/sentence_panel/view.dart';
 import 'package:jpnese2u/ui/capture_translate/view_model.dart';
 import 'package:jpnese2u/ui/common/copy_region/copy_region.dart';
@@ -40,6 +42,7 @@ class CaptureTranslateScreen extends StatelessWidget {
         final imageBytes = capturedData.imageBytes;
 
         return Scaffold(
+          endDrawer: const _DefinitionListDrawer(),
           body: SingleChildScrollView(
             padding: const .all(20),
             child: Center(
@@ -56,9 +59,9 @@ class CaptureTranslateScreen extends StatelessWidget {
                         return const LoadingWidget();
                       }
 
-                      final info = infoSnapshot.data;
+                      final data = infoSnapshot.data;
 
-                      if (info == null) {
+                      if (data == null) {
                         return Center(
                           child: Text(
                             "An error occurred!",
@@ -74,13 +77,13 @@ class CaptureTranslateScreen extends StatelessWidget {
                         crossAxisAlignment: .start,
                         children: [
                           SelectableText(
-                            info.text ?? '',
+                            data.text ?? '',
                             style: AppTextStyle.f24h32.copyWith(
                               color: AppColor.xFF1B1B22,
                               fontFamily: AppFonts.bizUDPGothic,
                             ),
                           ),
-                          ..._buildSentenceWidgets(info),
+                          ..._buildSentenceWidgets(data),
                         ],
                       );
                     },

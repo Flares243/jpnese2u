@@ -5,9 +5,9 @@ import 'package:flutter/widgets.dart';
 import 'package:jpnese2u/util/ignored_exception.dart';
 
 FutureOr<AsyncSnapshot<ValueT>> asyncGuard<ValueT>(
-  FutureOr<ValueT> Function() future, [
+  FutureOr<ValueT> Function() future, {
   bool Function(Object error)? test,
-]) async {
+}) async {
   try {
     return AsyncSnapshot.withData(.done, await future());
   } on IgnoredException catch (_) {

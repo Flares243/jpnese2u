@@ -10,7 +10,7 @@ import 'package:jpnese2u/ui/capture_translate/model.dart';
 import 'package:jpnese2u/ui/capture_translate/sentence_panel/sentence_selection_cubit.dart';
 import 'package:jpnese2u/util/async_guard.dart';
 
-typedef TokenDefinitionState = Map<int, AsyncSnapshot<TokenDefinitionData?>>;
+typedef TokenDefinitionState = Map<int, AsyncSnapshot<List<TokenDefinitionData>?>>;
 
 class TokenDefinitionCubit extends Cubit<TokenDefinitionState> {
   final List<RawToken> _rawTokens;
@@ -56,7 +56,7 @@ class TokenDefinitionCubit extends Cubit<TokenDefinitionState> {
     final token = _rawTokens.firstWhere((t) => t.tokenId == tokenId);
 
     final snapshot = await asyncGuard(
-      () => _tokenDefService.getDefinitionForToken(token),
+      () => _tokenDefService.getTokenDefinition(token),
     );
 
     if (isClosed) return;

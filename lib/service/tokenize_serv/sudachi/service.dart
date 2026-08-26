@@ -46,13 +46,13 @@ class SudachiTokenizeServ implements ITokenizeServ {
     final tokens = await asyncGuard(() async {
       final result = await _tokenizer!.tokenize(text, mode: .b);
 
-      for (var element in result) {
-        print(
-          'surface: ${element.surface}, partOfSpeech: ${element.partOfSpeech}, normalizedForm: ${element.normalizedForm}, dictionaryForm: ${element.dictionaryForm}, readingForm: ${element.readingForm}',
-        );
-      }
+      // for (var element in result.morphemes) {
+      //   print(
+      //     'surface: ${element.surface}, partOfSpeech: ${element.partOfSpeech}, normalizedForm: ${element.normalizedForm}, dictionaryForm: ${element.dictionaryForm}, readingForm: ${element.readingForm}',
+      //   );
+      // }
 
-      return result.mergeJapanesePredicates().indexed.map((e) {
+      return result.morphemes.mergeJapanesePredicates().indexed.map((e) {
         final (id, morpheme) = e;
         return SudachiToken.fromMorpheme(id, morpheme);
       }).toList();

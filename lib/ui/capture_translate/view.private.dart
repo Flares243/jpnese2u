@@ -30,8 +30,13 @@ class _DepsProvider extends StatelessWidget {
             return const Scaffold(body: LoadingWidget());
           }
 
-          return BlocProvider<CaptureTranslateVM>.value(
-            value: vm,
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider<CaptureTranslateVM>.value(value: vm),
+              BlocProvider<DefinitionDrawerCubit>(
+                create: (_) => DefinitionDrawerCubit(),
+              ),
+            ],
             child: Builder(builder: builder),
           );
         },
@@ -61,6 +66,64 @@ class _CaptureImage extends StatelessWidget {
         imageBytes,
         fit: .contain,
       ),
+    );
+  }
+}
+
+class _DefinitionListDrawer extends StatelessWidget {
+  const _DefinitionListDrawer();
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.sizeOf(context).width;
+
+    return BlocBuilder<DefinitionDrawerCubit, DefinitionDrawerState>(
+      builder: (context, state) {
+        final count = state.definitions.length;
+
+        return Drawer(
+          width: screenWidth * 2 / 3,
+          child: SafeArea(
+            child: Column(
+              crossAxisAlignment: .start,
+              children: [
+                Padding(
+                  padding: const .symmetric(horizontal: 16, vertical: 12),
+                  child: Row(
+                    children: [
+                      Text(
+                        '$count result${count == 1 ? '' : 's'}',
+                        style: AppTextStyle.f14h21.copyWith(
+                          color: AppColor.xFF464553,
+                        ),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.close),
+                        visualDensity: .compact,
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(height: 1),
+                if (count > 0)
+                  Expanded(
+                    child: ListView.separated(
+                      padding: const .all(12),
+                      itemCount: count,
+                      itemBuilder: (context, index) => DefinitionCard(
+                        data: state.definitions[index],
+                        hinshi: state.hinshi,
+                      ),
+                      separatorBuilder: (_, _) => const SizedBox(height: 8),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

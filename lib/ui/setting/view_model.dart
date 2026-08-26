@@ -80,6 +80,18 @@ class SettingVM extends Cubit<SettingState> {
 
         final snapshot = await _downloaderServ.downloadFile(
           url: DartDefine.sudachiDictFullUrl,
+          onProgress: (received, total) {
+            if (total <= 0) return;
+
+            emit(
+              state.copyWith(
+                dictionaryStatus: .withData(
+                  .waiting,
+                  (received / total * 100).toStringAsFixed(0),
+                ),
+              ),
+            );
+          },
         );
 
         final file = snapshot.data;

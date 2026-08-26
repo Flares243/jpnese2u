@@ -1,6 +1,9 @@
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 
-enum WindowType { screenshot, settings }
+enum WindowType {
+  screenshot,
+  settings,
+}
 
 const kRootTrayChannel = WindowMethodChannel(
   'jpnese2u.root_tray',

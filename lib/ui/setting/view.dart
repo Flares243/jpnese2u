@@ -63,7 +63,7 @@ class SettingScreen extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          const Expanded(child: Text('Sudachi Dictionary')),
+                          const Expanded(child: Text('Sudachi Tokenizer')),
                           if (state.connectionState == .waiting)
                             const Text(
                               'Do not close this window!',
@@ -75,8 +75,11 @@ class SettingScreen extends StatelessWidget {
                       ),
                       if (!state.hasData) ...[
                         const SizedBox(height: 8),
-                        Row(
+                        Column(
                           children: [
+                            const Text(
+                              'Let the app handle the dictionary download and import for you.',
+                            ),
                             OutlinedButton.icon(
                               onPressed: state.connectionState != .waiting
                                   ? () => vm.downloadDict()
@@ -84,7 +87,7 @@ class SettingScreen extends StatelessWidget {
                               icon: const Icon(Icons.download),
                               label: const Text('Download'),
                             ),
-                            const SizedBox(width: 12),
+                            const Divider(height: 12, thickness: 1),
                             OutlinedButton.icon(
                               onPressed: state.connectionState != .waiting
                                   ? () => vm.importDict()

@@ -1,5 +1,5 @@
 name: jpnese2u
-description: "jpnese2u is a desktop app that helps you learn Japanese passively. Capture any text on your screen and instantly see each word broken down with its meaning while reading manga, watching shows, or browsing the web without leaving your current app."
+description: "JPnese2U is a desktop app that helps you learn Japanese passively. Capture any text on your screen and instantly see each word broken down with its meaning while reading manga, watching shows, or browsing the web without leaving your current app."
 publish_to: "none"
 
 version: 0.0.1
@@ -28,8 +28,11 @@ dependencies:
       url: https://github.com/Flares243/tray_manager.git
       ref: main
       path: packages/tray_manager
-  sudachi_dart:
-    path: /Users/chuongcao/code/flutter_plugins/sudachi_dart
+  jm_dict:
+    git:
+      url: https://github.com/Flares243/jm_dict.git
+      ref: master
+  sudachi_dart: ^0.0.7
   cupertino_icons: ^1.0.8
   google_mlkit_text_recognition: ^0.15.1
   flutter_macos_permissions: ^2.0.8
@@ -76,6 +79,7 @@ flutter:
   assets:
     - assets/images/tray_icon.png
     - assets/sudachi/
+    - assets/dictionaries/
 
   fonts:
     - family: JetBrainsMono
