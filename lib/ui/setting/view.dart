@@ -53,60 +53,98 @@ class SettingScreen extends StatelessWidget {
               ),
               BlocSelector<SettingVM, SettingState, AsyncSnapshot<String>>(
                 selector: (state) => state.dictionaryStatus,
-                builder: (context, state) => Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 12,
-                    horizontal: 24,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          const Expanded(child: Text('Sudachi Tokenizer')),
-                          if (state.connectionState == .waiting)
-                            const Text(
-                              'Do not close this window!',
-                              style: TextStyle(color: Colors.red),
-                            )
-                          else
-                            _StatusIcon(status: state.hasData),
-                        ],
-                      ),
-                      if (!state.hasData) ...[
-                        const SizedBox(height: 8),
-                        Column(
+                builder: (context, state) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 24,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
                           children: [
-                            const Text(
-                              'Let the app handle the dictionary download and import for you.',
-                            ),
-                            OutlinedButton.icon(
-                              onPressed: state.connectionState != .waiting
-                                  ? () => vm.downloadDict()
-                                  : null,
-                              icon: const Icon(Icons.download),
-                              label: const Text('Download'),
-                            ),
-                            const Divider(height: 12, thickness: 1),
-                            OutlinedButton.icon(
-                              onPressed: state.connectionState != .waiting
-                                  ? () => vm.importDict()
-                                  : null,
-                              icon: const Icon(Icons.file_open),
-                              label: const Text('Import File'),
-                            ),
+                            const Expanded(child: Text('Sudachi Tokenizer')),
+                            if (state.connectionState != .waiting)
+                              _StatusIcon(status: state.hasData),
                           ],
                         ),
+                        if (state.connectionState == .waiting)
+                          ?_downloadProgressWidget(state.data),
+                        if (!state.hasData) ...[
+                          const SizedBox(height: 8),
+                          Column(
+                            crossAxisAlignment: .start,
+                            children: [
+                              Tooltip(
+                                constraints: const BoxConstraints(
+                                  maxWidth: 200,
+                                ),
+                                preferBelow: false,
+                                message:
+                                    'Let the app handle download and import tokenizer dictionary for you.',
+                                child: OutlinedButton.icon(
+                                  onPressed: state.connectionState != .waiting
+                                      ? () => vm.downloadDict()
+                                      : null,
+                                  icon: const Icon(Icons.download),
+                                  label: const Text('Download'),
+                                ),
+                              ),
+                              const Divider(height: 12, thickness: 1),
+                              Tooltip(
+                                message:
+                                    'Import your own tokenizer dictionary file.',
+                                child: OutlinedButton.icon(
+                                  onPressed: state.connectionState != .waiting
+                                      ? () => vm.importDict()
+                                      : null,
+                                  icon: const Icon(Icons.file_open),
+                                  label: const Text('Import File (.dic)'),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ],
-                    ],
-                  ),
-                ),
+                    ),
+                  );
+                },
               ),
-              const _RenshuuApiKeyInput(),
+              // const _RenshuuApiKeyInput(),
             ],
           ),
         );
       },
+    );
+  }
+
+  Widget? _downloadProgressWidget(String? data) {
+    final rawProgress = double.tryParse(data ?? '');
+    if (rawProgress == null) return null;
+
+    final progress = (rawProgress > 1.0 ? rawProgress / 100.0 : rawProgress)
+        .clamp(0.0, 1.0);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          LinearProgressIndicator(value: progress),
+          const SizedBox(height: 4),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Do not close this window!',
+                style: TextStyle(color: Colors.red, fontSize: 12),
+              ),
+              Text('${(progress * 100).toStringAsFixed(0)}%'),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

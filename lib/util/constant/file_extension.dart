@@ -1,7 +1,7 @@
 import 'package:path/path.dart' as path;
 
 enum FileExt {
-  dic(value: '.dic'),
+  dic(value: 'dic'),
   ;
 
   const FileExt({required this.value});
