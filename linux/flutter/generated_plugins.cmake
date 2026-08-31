@@ -5,6 +5,7 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   desktop_multi_window
   flutter_secure_storage_linux
+  hotkey_manager_linux
   objectbox_flutter_libs
   pasteboard
   screen_capturer_linux

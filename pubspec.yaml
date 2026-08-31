@@ -59,6 +59,7 @@ dependencies:
   path: ^1.9.1
   file_picker: ^11.0.2
   http_status_code: ^0.0.2
+  hotkey_manager: ^0.2.3
 
 dev_dependencies:
   flutter_test:
